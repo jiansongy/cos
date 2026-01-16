@@ -1,0 +1,831 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="CreatorOS - 设置向导">
+  <title>设置向导 - CreatorOS</title>
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%23FF2D55'/%3E%3Ctext x='16' y='21' font-family='system-ui' font-size='12' font-weight='bold' fill='white' text-anchor='middle'%3ECO%3C/text%3E%3C/svg%3E">
+  <link rel="stylesheet" href="assets/css/styles.css">
+  <style>
+    .wizard-container {
+      max-width: 800px;
+      margin: 0 auto;
+    }
+    
+    .wizard-progress {
+      display: flex;
+      justify-content: center;
+      gap: var(--space-2);
+      margin-bottom: var(--space-8);
+    }
+    
+    .wizard-step-dot {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      background: var(--bg-elevated);
+      transition: all var(--transition-base);
+    }
+    
+    .wizard-step-dot.active {
+      background: var(--color-primary);
+      box-shadow: 0 0 10px rgba(255, 45, 85, 0.5);
+    }
+    
+    .wizard-step-dot.completed {
+      background: var(--color-secondary);
+    }
+    
+    .wizard-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-2xl);
+      padding: var(--space-8);
+      margin-bottom: var(--space-6);
+    }
+    
+    .wizard-step {
+      display: none;
+    }
+    
+    .wizard-step.active {
+      display: block;
+      animation: fadeInUp 0.4s ease;
+    }
+    
+    .wizard-step-header {
+      text-align: center;
+      margin-bottom: var(--space-8);
+    }
+    
+    .wizard-step-number {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 40px;
+      height: 40px;
+      background: linear-gradient(135deg, var(--color-primary), var(--color-accent));
+      border-radius: 50%;
+      font-weight: 700;
+      margin-bottom: var(--space-4);
+    }
+    
+    .wizard-step-title {
+      font-size: var(--text-2xl);
+      font-weight: 700;
+      margin-bottom: var(--space-2);
+    }
+    
+    .wizard-step-desc {
+      color: var(--text-secondary);
+    }
+    
+    .form-section {
+      margin-bottom: var(--space-6);
+    }
+    
+    .form-section-title {
+      font-size: var(--text-lg);
+      font-weight: 600;
+      margin-bottom: var(--space-4);
+      display: flex;
+      align-items: center;
+      gap: var(--space-2);
+    }
+    
+    .tag-input-container {
+      display: flex;
+      flex-wrap: wrap;
+      gap: var(--space-2);
+      padding: var(--space-3);
+      background: var(--bg-surface);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-lg);
+      min-height: 50px;
+    }
+    
+    .tag-input-container:focus-within {
+      border-color: var(--color-primary);
+    }
+    
+    .tag-item {
+      display: inline-flex;
+      align-items: center;
+      gap: var(--space-2);
+      padding: var(--space-1) var(--space-3);
+      background: rgba(255, 45, 85, 0.1);
+      border: 1px solid rgba(255, 45, 85, 0.3);
+      border-radius: var(--radius-full);
+      font-size: var(--text-sm);
+      color: var(--color-primary);
+    }
+    
+    .tag-item button {
+      background: none;
+      border: none;
+      color: var(--color-primary);
+      cursor: pointer;
+      padding: 0;
+      line-height: 1;
+    }
+    
+    .tag-input {
+      flex: 1;
+      min-width: 150px;
+      background: transparent;
+      border: none;
+      color: var(--text-primary);
+      font-size: var(--text-base);
+      outline: none;
+    }
+    
+    .option-grid {
+      display: grid;
+      gap: var(--space-4);
+    }
+    
+    @media (min-width: 640px) {
+      .option-grid { grid-template-columns: repeat(2, 1fr); }
+      .option-grid-3 { grid-template-columns: repeat(3, 1fr); }
+    }
+    
+    .option-card {
+      background: var(--bg-surface);
+      border: 2px solid var(--border-color);
+      border-radius: var(--radius-xl);
+      padding: var(--space-5);
+      cursor: pointer;
+      transition: all var(--transition-base);
+      position: relative;
+    }
+    
+    .option-card:hover {
+      border-color: var(--color-primary);
+    }
+    
+    .option-card.selected {
+      border-color: var(--color-primary);
+      background: rgba(255, 45, 85, 0.1);
+    }
+    
+    .option-card.selected::after {
+      content: '';
+      position: absolute;
+      top: var(--space-3);
+      right: var(--space-3);
+      width: 20px;
+      height: 20px;
+      background: var(--color-primary);
+      border-radius: 50%;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='3'%3E%3Cpolyline points='20 6 9 17 4 12'/%3E%3C/svg%3E");
+      background-size: 12px;
+      background-repeat: no-repeat;
+      background-position: center;
+    }
+    
+    .option-icon {
+      font-size: var(--text-2xl);
+      margin-bottom: var(--space-2);
+    }
+    
+    .option-title {
+      font-weight: 600;
+      margin-bottom: var(--space-1);
+    }
+    
+    .option-desc {
+      font-size: var(--text-sm);
+      color: var(--text-secondary);
+    }
+    
+    .checkbox-grid {
+      display: grid;
+      gap: var(--space-3);
+    }
+    
+    @media (min-width: 640px) {
+      .checkbox-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+    
+    .checkbox-item {
+      display: flex;
+      align-items: center;
+      gap: var(--space-3);
+      padding: var(--space-3) var(--space-4);
+      background: var(--bg-surface);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-lg);
+      cursor: pointer;
+      transition: all var(--transition-base);
+    }
+    
+    .checkbox-item:hover {
+      border-color: var(--color-primary);
+    }
+    
+    .checkbox-item.checked {
+      border-color: var(--color-primary);
+      background: rgba(255, 45, 85, 0.1);
+    }
+    
+    .checkbox-box {
+      width: 18px;
+      height: 18px;
+      border: 2px solid var(--border-color);
+      border-radius: var(--radius-sm);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      transition: all var(--transition-base);
+    }
+    
+    .checkbox-item.checked .checkbox-box {
+      background: var(--color-primary);
+      border-color: var(--color-primary);
+    }
+    
+    .checkbox-box svg {
+      width: 12px;
+      height: 12px;
+      stroke: white;
+      opacity: 0;
+    }
+    
+    .checkbox-item.checked .checkbox-box svg {
+      opacity: 1;
+    }
+    
+    .wizard-nav {
+      display: flex;
+      justify-content: space-between;
+      gap: var(--space-4);
+      margin-top: var(--space-8);
+    }
+    
+    .wizard-nav .btn {
+      min-width: 140px;
+    }
+    
+    .completion-card {
+      text-align: center;
+      padding: var(--space-12);
+    }
+    
+    .completion-icon {
+      width: 80px;
+      height: 80px;
+      background: linear-gradient(135deg, var(--color-secondary), #4DE8C7);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto var(--space-6);
+    }
+    
+    .completion-icon svg {
+      width: 40px;
+      height: 40px;
+      stroke: white;
+    }
+    
+    .completion-title {
+      font-size: var(--text-2xl);
+      font-weight: 700;
+      margin-bottom: var(--space-3);
+    }
+    
+    .completion-desc {
+      color: var(--text-secondary);
+      margin-bottom: var(--space-8);
+    }
+    
+    .pillar-input-group {
+      display: flex;
+      gap: var(--space-3);
+      margin-bottom: var(--space-3);
+    }
+    
+    .pillar-input-group input {
+      flex: 1;
+    }
+    
+    .pillar-number {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 32px;
+      height: 44px;
+      background: var(--bg-elevated);
+      border-radius: var(--radius-md);
+      font-weight: 600;
+      color: var(--text-secondary);
+    }
+  </style>
+</head>
+<body>
+  <header class="site-header">
+    <div class="container">
+      <div class="site-header-inner">
+        <a href="index.html" class="logo">
+          <span class="logo-mark">CO</span>
+          <span class="logo-text">CreatorOS</span>
+        </a>
+        <nav class="desktop-nav">
+          <a href="index.html" class="nav-link">仪表盘</a>
+          <a href="setup-wizard.html" class="nav-link active">设置</a>
+          <a href="topic-engine.html" class="nav-link">选题</a>
+          <a href="script-generator.html" class="nav-link">脚本</a>
+          <a href="material-library.html" class="nav-link">素材</a>
+          <a href="publish-center.html" class="nav-link">发布</a>
+        </nav>
+        <button class="mobile-menu-btn" aria-label="Toggle menu">
+          <span class="hamburger-line"></span>
+          <span class="hamburger-line"></span>
+          <span class="hamburger-line"></span>
+        </button>
+      </div>
+    </div>
+  </header>
+  
+  <nav class="mobile-nav">
+    <a href="index.html" class="mobile-nav-link">仪表盘</a>
+    <a href="setup-wizard.html" class="mobile-nav-link">设置</a>
+    <a href="topic-engine.html" class="mobile-nav-link">选题</a>
+    <a href="script-generator.html" class="mobile-nav-link">脚本</a>
+    <a href="material-library.html" class="mobile-nav-link">素材</a>
+    <a href="publish-center.html" class="mobile-nav-link">发布</a>
+  </nav>
+
+  <main class="main-content">
+    <div class="container">
+      <div class="wizard-container">
+        <header class="page-header" data-animate="fade-in-up">
+          <span class="page-eyebrow">一次性设置</span>
+          <h1 class="page-title">创作者档案设置</h1>
+          <p class="page-subtitle">完成以下设置，AI将根据你的配置自动生成个性化选题</p>
+        </header>
+        
+        <div class="wizard-progress" data-animate="fade-in-up">
+          <div class="wizard-step-dot active" data-step="1"></div>
+          <div class="wizard-step-dot" data-step="2"></div>
+          <div class="wizard-step-dot" data-step="3"></div>
+          <div class="wizard-step-dot" data-step="4"></div>
+          <div class="wizard-step-dot" data-step="5"></div>
+        </div>
+        
+        <!-- Step 1: 买家画像 -->
+        <div class="wizard-step active" data-step="1">
+          <div class="wizard-card">
+            <div class="wizard-step-header">
+              <div class="wizard-step-number">1</div>
+              <h2 class="wizard-step-title">买家画像定义</h2>
+              <p class="wizard-step-desc">谁会付钱给你？明确你的目标付费用户</p>
+            </div>
+            
+            <div class="form-section">
+              <label class="form-section-title">主要买家画像</label>
+              <input type="text" class="form-input" id="buyer-persona" placeholder="如：30-40岁想副业变现的职场人">
+            </div>
+            
+            <div class="form-section">
+              <label class="form-section-title">买家痛点（按回车添加）</label>
+              <div class="tag-input-container" id="pain-points-container">
+                <input type="text" class="tag-input" id="pain-points-input" placeholder="如：时间少、不知道做什么、怕露脸">
+              </div>
+            </div>
+            
+            <div class="form-section">
+              <label class="form-section-title">购买触发点（按回车添加）</label>
+              <div class="tag-input-container" id="triggers-container">
+                <input type="text" class="tag-input" id="triggers-input" placeholder="如：看到同龄人成功案例">
+              </div>
+            </div>
+            
+            <div class="form-section">
+              <label class="form-section-title">常见反对理由（按回车添加）</label>
+              <div class="tag-input-container" id="objections-container">
+                <input type="text" class="tag-input" id="objections-input" placeholder="如：没时间、不会拍、没粉丝基础">
+              </div>
+            </div>
+          </div>
+          
+          <div class="wizard-nav">
+            <div></div>
+            <button class="btn btn-primary" onclick="nextStep()">下一步 →</button>
+          </div>
+        </div>
+        
+        <!-- Step 2: 变现路径 -->
+        <div class="wizard-step" data-step="2">
+          <div class="wizard-card">
+            <div class="wizard-step-header">
+              <div class="wizard-step-number">2</div>
+              <h2 class="wizard-step-title">变现路径设计</h2>
+              <p class="wizard-step-desc">内容如何转化为收入？</p>
+            </div>
+            
+            <div class="form-section">
+              <label class="form-section-title">主要变现模式</label>
+              <div class="option-grid">
+                <div class="option-card" data-value="引流" onclick="selectOption(this, 'monetization-model')">
+                  <div class="option-icon">🏪</div>
+                  <div class="option-title">引流到店/私域</div>
+                  <p class="option-desc">引导用户到实体店或微信私域</p>
+                </div>
+                <div class="option-card" data-value="卖货" onclick="selectOption(this, 'monetization-model')">
+                  <div class="option-icon">🛒</div>
+                  <div class="option-title">直播/短视频带货</div>
+                  <p class="option-desc">通过直播或短视频直接卖货</p>
+                </div>
+                <div class="option-card" data-value="课程" onclick="selectOption(this, 'monetization-model')">
+                  <div class="option-icon">📚</div>
+                  <div class="option-title">知识付费/课程</div>
+                  <p class="option-desc">销售课程、咨询或培训服务</p>
+                </div>
+                <div class="option-card" data-value="服务" onclick="selectOption(this, 'monetization-model')">
+                  <div class="option-icon">🛠️</div>
+                  <div class="option-title">专业服务</div>
+                  <p class="option-desc">设计、开发、咨询等专业服务</p>
+                </div>
+              </div>
+            </div>
+            
+            <div class="form-section">
+              <label class="form-section-title">产品/服务价格区间</label>
+              <input type="text" class="form-input" id="price-point" placeholder="如：999-2999">
+            </div>
+            
+            <div class="form-section">
+              <label class="form-section-title">转化路径描述</label>
+              <input type="text" class="form-input" id="conversion-path" placeholder="如：免费内容 → 私域 → 低价课 → 高价课">
+            </div>
+          </div>
+          
+          <div class="wizard-nav">
+            <button class="btn btn-secondary" onclick="prevStep()">← 上一步</button>
+            <button class="btn btn-primary" onclick="nextStep()">下一步 →</button>
+          </div>
+        </div>
+        
+        <!-- Step 3: 创作者DNA -->
+        <div class="wizard-step" data-step="3">
+          <div class="wizard-card">
+            <div class="wizard-step-header">
+              <div class="wizard-step-number">3</div>
+              <h2 class="wizard-step-title">创作者DNA</h2>
+              <p class="wizard-step-desc">你的独特优势和风格是什么？</p>
+            </div>
+            
+            <div class="form-section">
+              <label class="form-section-title">独特优势（勾选适用项）</label>
+              <div class="checkbox-grid" id="advantages-grid">
+                <label class="checkbox-item" onclick="toggleCheckbox(this)" data-value="原产地资源">
+                  <span class="checkbox-box"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></span>
+                  <span>原产地资源（海边、产地、工厂）</span>
+                </label>
+                <label class="checkbox-item" onclick="toggleCheckbox(this)" data-value="实体门店">
+                  <span class="checkbox-box"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></span>
+                  <span>实体门店/供应链</span>
+                </label>
+                <label class="checkbox-item" onclick="toggleCheckbox(this)" data-value="专业证书">
+                  <span class="checkbox-box"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></span>
+                  <span>特殊技能证书</span>
+                </label>
+                <label class="checkbox-item" onclick="toggleCheckbox(this)" data-value="行业经验">
+                  <span class="checkbox-box"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></span>
+                  <span>行业从业经验（>3年）</span>
+                </label>
+                <label class="checkbox-item" onclick="toggleCheckbox(this)" data-value="表达能力">
+                  <span class="checkbox-box"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></span>
+                  <span>表达能力强</span>
+                </label>
+                <label class="checkbox-item" onclick="toggleCheckbox(this)" data-value="镜头表现">
+                  <span class="checkbox-box"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></span>
+                  <span>镜头表现力好</span>
+                </label>
+                <label class="checkbox-item" onclick="toggleCheckbox(this)" data-value="人设鲜明">
+                  <span class="checkbox-box"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></span>
+                  <span>人设特质鲜明</span>
+                </label>
+                <label class="checkbox-item" onclick="toggleCheckbox(this)" data-value="已有案例">
+                  <span class="checkbox-box"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></span>
+                  <span>已有成功案例/学员</span>
+                </label>
+              </div>
+            </div>
+            
+            <div class="form-section">
+              <label class="form-section-title">可信标记（按回车添加）</label>
+              <div class="tag-input-container" id="credibility-container">
+                <input type="text" class="tag-input" id="credibility-input" placeholder="如：月入X万截图、学员案例、从业N年">
+              </div>
+            </div>
+            
+            <div class="form-section">
+              <label class="form-section-title">表达风格</label>
+              <input type="text" class="form-input" id="style" placeholder="如：务实、不画饼、讲人话">
+            </div>
+            
+            <div class="form-section">
+              <label class="form-section-title">禁止事项（按回车添加）</label>
+              <div class="tag-input-container" id="avoid-container">
+                <input type="text" class="tag-input" id="avoid-input" placeholder="如：鸡汤、炫富、贩卖焦虑">
+              </div>
+            </div>
+          </div>
+          
+          <div class="wizard-nav">
+            <button class="btn btn-secondary" onclick="prevStep()">← 上一步</button>
+            <button class="btn btn-primary" onclick="nextStep()">下一步 →</button>
+          </div>
+        </div>
+        
+        <!-- Step 4: 竞品情报 -->
+        <div class="wizard-step" data-step="4">
+          <div class="wizard-card">
+            <div class="wizard-step-header">
+              <div class="wizard-step-number">4</div>
+              <h2 class="wizard-step-title">竞品情报</h2>
+              <p class="wizard-step-desc">你在市场中的位置是什么？</p>
+            </div>
+            
+            <div class="form-section">
+              <label class="form-section-title">主要竞品账号（按回车添加）</label>
+              <div class="tag-input-container" id="competitors-container">
+                <input type="text" class="tag-input" id="competitors-input" placeholder="如：@账号A、@账号B">
+              </div>
+            </div>
+            
+            <div class="form-section">
+              <label class="form-section-title">你的差异化角度</label>
+              <textarea class="form-textarea" id="differentiation" placeholder="如：更务实、有真实案例、不贩卖焦虑、专注某个细分领域"></textarea>
+            </div>
+            
+            <div class="form-section">
+              <label class="form-section-title">竞品可借鉴点</label>
+              <textarea class="form-textarea" id="learnings" placeholder="如：选题角度、视觉风格、互动方式"></textarea>
+            </div>
+          </div>
+          
+          <div class="wizard-nav">
+            <button class="btn btn-secondary" onclick="prevStep()">← 上一步</button>
+            <button class="btn btn-primary" onclick="nextStep()">下一步 →</button>
+          </div>
+        </div>
+        
+        <!-- Step 5: 内容策略 -->
+        <div class="wizard-step" data-step="5">
+          <div class="wizard-card">
+            <div class="wizard-step-header">
+              <div class="wizard-step-number">5</div>
+              <h2 class="wizard-step-title">内容策略</h2>
+              <p class="wizard-step-desc">你要持续产出什么内容？</p>
+            </div>
+            
+            <div class="form-section">
+              <label class="form-section-title">内容支柱（3-5个核心方向）</label>
+              <div class="pillar-input-group">
+                <span class="pillar-number">1</span>
+                <input type="text" class="form-input" id="pillar-1" placeholder="如：副业选择">
+              </div>
+              <div class="pillar-input-group">
+                <span class="pillar-number">2</span>
+                <input type="text" class="form-input" id="pillar-2" placeholder="如：执行方法">
+              </div>
+              <div class="pillar-input-group">
+                <span class="pillar-number">3</span>
+                <input type="text" class="form-input" id="pillar-3" placeholder="如：心态调整">
+              </div>
+              <div class="pillar-input-group">
+                <span class="pillar-number">4</span>
+                <input type="text" class="form-input" id="pillar-4" placeholder="如：案例分享（可选）">
+              </div>
+              <div class="pillar-input-group">
+                <span class="pillar-number">5</span>
+                <input type="text" class="form-input" id="pillar-5" placeholder="如：热点解读（可选）">
+              </div>
+            </div>
+            
+            <div class="form-section">
+              <label class="form-section-title">主要内容形式</label>
+              <div class="option-grid option-grid-3">
+                <div class="option-card" data-value="口播" onclick="selectOption(this, 'content-format')">
+                  <div class="option-icon">🎤</div>
+                  <div class="option-title">口播</div>
+                </div>
+                <div class="option-card" data-value="图文" onclick="selectOption(this, 'content-format')">
+                  <div class="option-icon">📝</div>
+                  <div class="option-title">图文</div>
+                </div>
+                <div class="option-card" data-value="Vlog" onclick="selectOption(this, 'content-format')">
+                  <div class="option-icon">📹</div>
+                  <div class="option-title">Vlog</div>
+                </div>
+              </div>
+            </div>
+            
+            <div class="form-section">
+              <label class="form-section-title">更新节奏</label>
+              <div class="option-grid option-grid-3">
+                <div class="option-card" data-value="日更" onclick="selectOption(this, 'cadence')">
+                  <div class="option-title">日更</div>
+                  <p class="option-desc">每天1条</p>
+                </div>
+                <div class="option-card" data-value="隔日更" onclick="selectOption(this, 'cadence')">
+                  <div class="option-title">隔日更</div>
+                  <p class="option-desc">每两天1条</p>
+                </div>
+                <div class="option-card" data-value="周更" onclick="selectOption(this, 'cadence')">
+                  <div class="option-title">周更</div>
+                  <p class="option-desc">每周3-5条</p>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <div class="wizard-nav">
+            <button class="btn btn-secondary" onclick="prevStep()">← 上一步</button>
+            <button class="btn btn-primary" onclick="completeSetup()">完成设置 ✓</button>
+          </div>
+        </div>
+        
+        <!-- Completion -->
+        <div class="wizard-step" data-step="complete">
+          <div class="wizard-card completion-card">
+            <div class="completion-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <polyline points="20 6 9 17 4 12"/>
+              </svg>
+            </div>
+            <h2 class="completion-title">设置完成！</h2>
+            <p class="completion-desc">你的创作者档案已保存。现在可以开始使用AI选题引擎了。</p>
+            <a href="index.html" class="btn btn-primary">进入仪表盘 →</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <script src="assets/js/main.js"></script>
+  <script>
+    let currentStep = 1;
+    const totalSteps = 5;
+    
+    // Tag input functionality
+    function setupTagInput(containerId, inputId) {
+      const container = document.getElementById(containerId);
+      const input = document.getElementById(inputId);
+      
+      input.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' && input.value.trim()) {
+          e.preventDefault();
+          addTag(container, input.value.trim(), input);
+          input.value = '';
+        }
+      });
+    }
+    
+    function addTag(container, value, input) {
+      const tag = document.createElement('span');
+      tag.className = 'tag-item';
+      tag.innerHTML = `${value} <button onclick="removeTag(this)">&times;</button>`;
+      container.insertBefore(tag, input);
+    }
+    
+    function removeTag(btn) {
+      btn.parentElement.remove();
+    }
+    
+    // Initialize tag inputs
+    setupTagInput('pain-points-container', 'pain-points-input');
+    setupTagInput('triggers-container', 'triggers-input');
+    setupTagInput('objections-container', 'objections-input');
+    setupTagInput('credibility-container', 'credibility-input');
+    setupTagInput('avoid-container', 'avoid-input');
+    setupTagInput('competitors-container', 'competitors-input');
+    
+    // Option selection
+    function selectOption(el, group) {
+      document.querySelectorAll(`[onclick*="${group}"]`).forEach(card => {
+        card.classList.remove('selected');
+      });
+      el.classList.add('selected');
+    }
+    
+    // Checkbox toggle
+    function toggleCheckbox(el) {
+      el.classList.toggle('checked');
+    }
+    
+    // Step navigation
+    function updateProgress() {
+      document.querySelectorAll('.wizard-step-dot').forEach((dot, index) => {
+        dot.classList.remove('active', 'completed');
+        if (index + 1 < currentStep) {
+          dot.classList.add('completed');
+        } else if (index + 1 === currentStep) {
+          dot.classList.add('active');
+        }
+      });
+    }
+    
+    function showStep(step) {
+      document.querySelectorAll('.wizard-step').forEach(el => {
+        el.classList.remove('active');
+      });
+      document.querySelector(`[data-step="${step}"]`).classList.add('active');
+      updateProgress();
+    }
+    
+    function nextStep() {
+      if (currentStep < totalSteps) {
+        currentStep++;
+        showStep(currentStep);
+      }
+    }
+    
+    function prevStep() {
+      if (currentStep > 1) {
+        currentStep--;
+        showStep(currentStep);
+      }
+    }
+    
+    function getTagValues(containerId) {
+      const container = document.getElementById(containerId);
+      return Array.from(container.querySelectorAll('.tag-item'))
+        .map(tag => tag.textContent.replace('×', '').trim());
+    }
+    
+    function getSelectedOption(group) {
+      const selected = document.querySelector(`[onclick*="${group}"].selected`);
+      return selected ? selected.dataset.value : null;
+    }
+    
+    function getCheckedAdvantages() {
+      return Array.from(document.querySelectorAll('#advantages-grid .checkbox-item.checked'))
+        .map(el => el.dataset.value);
+    }
+    
+    function completeSetup() {
+      // Collect all data
+      const profile = {
+        buyer: {
+          persona: document.getElementById('buyer-persona').value,
+          painPoints: getTagValues('pain-points-container'),
+          triggers: getTagValues('triggers-container'),
+          objections: getTagValues('objections-container')
+        },
+        monetization: {
+          model: getSelectedOption('monetization-model'),
+          pricePoint: document.getElementById('price-point').value,
+          conversionPath: document.getElementById('conversion-path').value
+        },
+        creator: {
+          advantages: getCheckedAdvantages(),
+          credibility: getTagValues('credibility-container'),
+          style: document.getElementById('style').value,
+          avoid: getTagValues('avoid-container')
+        },
+        competitors: {
+          accounts: getTagValues('competitors-container'),
+          differentiation: document.getElementById('differentiation').value,
+          learnings: document.getElementById('learnings').value
+        },
+        content: {
+          pillars: [
+            document.getElementById('pillar-1').value,
+            document.getElementById('pillar-2').value,
+            document.getElementById('pillar-3').value,
+            document.getElementById('pillar-4').value,
+            document.getElementById('pillar-5').value
+          ].filter(p => p),
+          format: getSelectedOption('content-format'),
+          cadence: getSelectedOption('cadence')
+        },
+        setupCompleted: true,
+        setupDate: new Date().toISOString()
+      };
+      
+      // Save to localStorage
+      localStorage.setItem('creatorOS_profile', JSON.stringify(profile));
+      
+      // Show completion
+      showStep('complete');
+    }
+    
+    // Check if setup was already completed
+    const existingProfile = localStorage.getItem('creatorOS_profile');
+    if (existingProfile) {
+      const profile = JSON.parse(existingProfile);
+      // Pre-fill form with existing data if needed
+      if (profile.buyer?.persona) {
+        document.getElementById('buyer-persona').value = profile.buyer.persona;
+      }
+      // ... more pre-filling could be added here
+    }
+  </script>
+</body>
+</html>

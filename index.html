@@ -1,0 +1,1277 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="CreatorOS - 自媒体内容创作操作系统">
+  <title>CreatorOS - 仪表盘</title>
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%23FF2D55'/%3E%3Ctext x='16' y='21' font-family='system-ui' font-size='12' font-weight='bold' fill='white' text-anchor='middle'%3ECO%3C/text%3E%3C/svg%3E">
+  <link rel="stylesheet" href="assets/css/styles.css">
+  <style>
+    .dashboard-grid {
+      display: grid;
+      gap: var(--space-6);
+    }
+    
+    @media (min-width: 1024px) {
+      .dashboard-grid {
+        grid-template-columns: 2fr 1fr;
+      }
+    }
+    
+    .dashboard-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-2xl);
+      padding: var(--space-6);
+    }
+    
+    .dashboard-card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: var(--space-5);
+    }
+    
+    .dashboard-card-title {
+      font-size: var(--text-lg);
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: var(--space-2);
+    }
+    
+    .dashboard-card-title svg {
+      width: 20px;
+      height: 20px;
+      stroke: var(--color-primary);
+    }
+    
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: var(--space-4);
+    }
+    
+    @media (min-width: 640px) {
+      .stats-grid { grid-template-columns: repeat(4, 1fr); }
+    }
+    
+    .stat-card {
+      background: var(--bg-surface);
+      border-radius: var(--radius-xl);
+      padding: var(--space-4);
+      text-align: center;
+    }
+    
+    .stat-value {
+      font-size: var(--text-2xl);
+      font-weight: 700;
+      color: var(--color-primary);
+    }
+    
+    .stat-label {
+      font-size: var(--text-sm);
+      color: var(--text-secondary);
+      margin-top: var(--space-1);
+    }
+    
+    .stat-change {
+      font-size: var(--text-xs);
+      margin-top: var(--space-1);
+    }
+    
+    .stat-change.positive { color: var(--color-secondary); }
+    .stat-change.negative { color: var(--color-danger); }
+    
+    .topic-list {
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-3);
+    }
+    
+    .topic-item {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-xl);
+      padding: var(--space-4);
+      cursor: pointer;
+      transition: all var(--transition-base);
+    }
+    
+    .topic-item:hover {
+      border-color: var(--color-primary);
+      transform: translateX(4px);
+    }
+    
+    .topic-item-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: var(--space-2);
+    }
+    
+    .topic-score {
+      display: inline-flex;
+      align-items: center;
+      gap: var(--space-1);
+      padding: var(--space-1) var(--space-2);
+      background: rgba(0, 212, 170, 0.1);
+      border-radius: var(--radius-full);
+      font-size: var(--text-xs);
+      font-weight: 600;
+      color: var(--color-secondary);
+    }
+    
+    .topic-title {
+      font-weight: 600;
+      margin-bottom: var(--space-2);
+      line-height: 1.4;
+    }
+    
+    .topic-meta {
+      display: flex;
+      gap: var(--space-3);
+      font-size: var(--text-xs);
+      color: var(--text-muted);
+    }
+    
+    .topic-meta span {
+      display: flex;
+      align-items: center;
+      gap: var(--space-1);
+    }
+    
+    .quick-actions {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: var(--space-3);
+    }
+    
+    .quick-action {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: var(--space-2);
+      padding: var(--space-4);
+      background: var(--bg-surface);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-xl);
+      text-decoration: none;
+      color: var(--text-primary);
+      transition: all var(--transition-base);
+    }
+    
+    .quick-action:hover {
+      border-color: var(--color-primary);
+      transform: translateY(-2px);
+    }
+    
+    .quick-action-icon {
+      width: 40px;
+      height: 40px;
+      border-radius: var(--radius-lg);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: var(--text-xl);
+    }
+    
+    .quick-action-icon.pink { background: rgba(255, 45, 85, 0.1); }
+    .quick-action-icon.purple { background: rgba(88, 86, 214, 0.1); }
+    .quick-action-icon.green { background: rgba(0, 212, 170, 0.1); }
+    .quick-action-icon.orange { background: rgba(255, 149, 0, 0.1); }
+    
+    .quick-action-label {
+      font-size: var(--text-sm);
+      font-weight: 500;
+    }
+    
+    .insight-card {
+      background: linear-gradient(135deg, rgba(88, 86, 214, 0.1), rgba(255, 45, 85, 0.1));
+      border: 1px solid rgba(88, 86, 214, 0.2);
+      border-radius: var(--radius-xl);
+      padding: var(--space-5);
+      margin-bottom: var(--space-4);
+    }
+    
+    .insight-title {
+      font-size: var(--text-sm);
+      font-weight: 600;
+      color: var(--color-accent);
+      margin-bottom: var(--space-2);
+      display: flex;
+      align-items: center;
+      gap: var(--space-2);
+    }
+    
+    .insight-text {
+      font-size: var(--text-sm);
+      color: var(--text-secondary);
+      line-height: 1.6;
+    }
+    
+    .setup-prompt {
+      background: linear-gradient(135deg, rgba(255, 45, 85, 0.1), rgba(88, 86, 214, 0.1));
+      border: 1px solid rgba(255, 45, 85, 0.3);
+      border-radius: var(--radius-2xl);
+      padding: var(--space-8);
+      text-align: center;
+      margin-bottom: var(--space-8);
+    }
+    
+    .setup-prompt-icon {
+      width: 64px;
+      height: 64px;
+      background: linear-gradient(135deg, var(--color-primary), var(--color-accent));
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto var(--space-4);
+      font-size: var(--text-2xl);
+    }
+    
+    .setup-prompt-title {
+      font-size: var(--text-xl);
+      font-weight: 600;
+      margin-bottom: var(--space-2);
+    }
+    
+    .setup-prompt-desc {
+      color: var(--text-secondary);
+      margin-bottom: var(--space-6);
+    }
+    
+    .trend-list {
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-3);
+    }
+    
+    .trend-item {
+      display: flex;
+      align-items: center;
+      gap: var(--space-3);
+      padding: var(--space-3);
+      background: var(--bg-surface);
+      border-radius: var(--radius-lg);
+    }
+    
+    .trend-rank {
+      width: 24px;
+      height: 24px;
+      background: var(--bg-elevated);
+      border-radius: var(--radius-sm);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: var(--text-xs);
+      font-weight: 600;
+      color: var(--text-muted);
+    }
+    
+    .trend-rank.hot {
+      background: rgba(255, 45, 85, 0.1);
+      color: var(--color-primary);
+    }
+    
+    .trend-text {
+      flex: 1;
+      font-size: var(--text-sm);
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+    
+    .profile-summary {
+      background: var(--bg-surface);
+      border-radius: var(--radius-xl);
+      padding: var(--space-4);
+      margin-bottom: var(--space-4);
+    }
+    
+    .profile-item {
+      display: flex;
+      justify-content: space-between;
+      padding: var(--space-2) 0;
+      border-bottom: 1px solid var(--border-color);
+      font-size: var(--text-sm);
+    }
+    
+    .profile-item:last-child {
+      border-bottom: none;
+    }
+    
+    .profile-label {
+      color: var(--text-secondary);
+    }
+    
+    .profile-value {
+      font-weight: 500;
+      color: var(--color-primary);
+    }
+  </style>
+</head>
+<body>
+  <header class="site-header">
+    <div class="container">
+      <div class="site-header-inner">
+        <a href="index.html" class="logo">
+          <span class="logo-mark">CO</span>
+          <span class="logo-text">CreatorOS</span>
+        </a>
+        <nav class="desktop-nav">
+          <a href="index.html" class="nav-link active">仪表盘</a>
+          <a href="setup-wizard.html" class="nav-link">设置</a>
+          <a href="topic-engine.html" class="nav-link">选题</a>
+          <a href="script-generator.html" class="nav-link">脚本</a>
+          <a href="material-library.html" class="nav-link">素材</a>
+          <a href="publish-center.html" class="nav-link">发布</a>
+        </nav>
+        <button class="mobile-menu-btn" aria-label="Toggle menu">
+          <span class="hamburger-line"></span>
+          <span class="hamburger-line"></span>
+          <span class="hamburger-line"></span>
+        </button>
+      </div>
+    </div>
+  </header>
+  
+  <nav class="mobile-nav">
+    <a href="index.html" class="mobile-nav-link">仪表盘</a>
+    <a href="setup-wizard.html" class="mobile-nav-link">设置</a>
+    <a href="topic-engine.html" class="mobile-nav-link">选题</a>
+    <a href="script-generator.html" class="mobile-nav-link">脚本</a>
+    <a href="material-library.html" class="mobile-nav-link">素材</a>
+    <a href="publish-center.html" class="mobile-nav-link">发布</a>
+  </nav>
+
+  <main class="main-content">
+    <div class="container">
+      <!-- Setup Prompt (shown if not completed) -->
+      <div class="setup-prompt" id="setup-prompt" data-animate="fade-in-up">
+        <div class="setup-prompt-icon">🚀</div>
+        <h2 class="setup-prompt-title">欢迎使用 CreatorOS</h2>
+        <p class="setup-prompt-desc">完成创作者档案设置，解锁AI个性化选题生成功能</p>
+        <a href="setup-wizard.html" class="btn btn-primary">开始设置（约5分钟）</a>
+      </div>
+      
+      <!-- Main Dashboard (shown after setup) -->
+      <div id="main-dashboard" style="display: none;">
+        <header class="page-header" data-animate="fade-in-up">
+          <h1 class="page-title">早上好，创作者</h1>
+          <p class="page-subtitle">今天准备创作什么内容？</p>
+        </header>
+        
+        <!-- Stats -->
+        <div class="stats-grid mb-8" data-animate="fade-in-up">
+          <div class="stat-card">
+            <div class="stat-value" id="stat-views">--</div>
+            <div class="stat-label">昨日播放</div>
+            <div class="stat-change positive" id="stat-views-change">--</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-value" id="stat-likes">--</div>
+            <div class="stat-label">昨日点赞</div>
+            <div class="stat-change positive" id="stat-likes-change">--</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-value" id="stat-comments">--</div>
+            <div class="stat-label">昨日评论</div>
+            <div class="stat-change" id="stat-comments-change">--</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-value" id="stat-followers">--</div>
+            <div class="stat-label">新增粉丝</div>
+            <div class="stat-change positive" id="stat-followers-change">--</div>
+          </div>
+        </div>
+        
+        <div class="dashboard-grid">
+          <!-- Left Column -->
+          <div>
+            <!-- AI Insight -->
+            <div class="insight-card" data-animate="fade-in-up">
+              <div class="insight-title">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:16px;height:16px;">
+                  <circle cx="12" cy="12" r="10"/>
+                  <path d="M12 16v-4M12 8h.01"/>
+                </svg>
+                AI 数据洞察
+              </div>
+              <p class="insight-text" id="ai-insight">
+                昨日发布的内容完播率达到45%，高于平均水平。建议今日继续发布类似主题的内容，并尝试在开头3秒增加更强的钩子。
+              </p>
+            </div>
+            
+            <!-- Today's Topics -->
+            <div class="dashboard-card" data-animate="fade-in-up">
+              <div class="dashboard-card-header">
+                <h2 class="dashboard-card-title">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
+                  </svg>
+                  今日推荐选题
+                </h2>
+                <a href="topic-engine.html" class="btn btn-ghost">查看全部</a>
+              </div>
+              
+              <div class="topic-list" id="topic-list">
+                <div class="topic-item" onclick="window.location='script-generator.html'">
+                  <div class="topic-item-header">
+                    <span class="topic-score">92分</span>
+                  </div>
+                  <div class="topic-title">被裁后收入反而涨了？这个副业逻辑颠覆了我</div>
+                  <div class="topic-meta">
+                    <span>讲故事</span>
+                    <span>买家痛点：怕失业</span>
+                  </div>
+                </div>
+                <div class="topic-item" onclick="window.location='script-generator.html'">
+                  <div class="topic-item-header">
+                    <span class="topic-score">88分</span>
+                  </div>
+                  <div class="topic-title">每天30分钟副业时间，我是怎么3个月做到10万粉的</div>
+                  <div class="topic-meta">
+                    <span>教知识</span>
+                    <span>买家痛点：时间少</span>
+                  </div>
+                </div>
+                <div class="topic-item" onclick="window.location='script-generator.html'">
+                  <div class="topic-item-header">
+                    <span class="topic-score">85分</span>
+                  </div>
+                  <div class="topic-title">不露脸也能月入过万？这3种内容形式最适合社恐</div>
+                  <div class="topic-meta">
+                    <span>晒过程</span>
+                    <span>买家痛点：怕露脸</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <!-- Right Column -->
+          <div>
+            <!-- Quick Actions -->
+            <div class="dashboard-card mb-6" data-animate="fade-in-up">
+              <h2 class="dashboard-card-title mb-4">快捷操作</h2>
+              <div class="quick-actions">
+                <a href="topic-engine.html" class="quick-action">
+                  <div class="quick-action-icon pink">🎯</div>
+                  <span class="quick-action-label">生成选题</span>
+                </a>
+                <a href="script-generator.html" class="quick-action">
+                  <div class="quick-action-icon purple">📝</div>
+                  <span class="quick-action-label">写脚本</span>
+                </a>
+                <a href="material-library.html" class="quick-action">
+                  <div class="quick-action-icon green">📁</div>
+                  <span class="quick-action-label">素材库</span>
+                </a>
+                <a href="publish-center.html" class="quick-action">
+                  <div class="quick-action-icon orange">🚀</div>
+                  <span class="quick-action-label">发布</span>
+                </a>
+              </div>
+            </div>
+            
+            <!-- Profile Summary -->
+            <div class="dashboard-card mb-6" data-animate="fade-in-up">
+              <div class="dashboard-card-header">
+                <h2 class="dashboard-card-title">我的档案</h2>
+                <a href="setup-wizard.html" class="btn btn-ghost">编辑</a>
+              </div>
+              <div class="profile-summary">
+                <div class="profile-item">
+                  <span class="profile-label">目标买家</span>
+                  <span class="profile-value" id="profile-buyer">--</span>
+                </div>
+                <div class="profile-item">
+                  <span class="profile-label">变现模式</span>
+                  <span class="profile-value" id="profile-monetization">--</span>
+                </div>
+                <div class="profile-item">
+                  <span class="profile-label">更新节奏</span>
+                  <span class="profile-value" id="profile-cadence">--</span>
+                </div>
+              </div>
+            </div>
+            
+            <!-- Trending -->
+            <div class="dashboard-card" data-animate="fade-in-up">
+              <div class="dashboard-card-header">
+                <h2 class="dashboard-card-title">热点参考</h2>
+              </div>
+              <div class="trend-list">
+                <div class="trend-item">
+                  <span class="trend-rank hot">1</span>
+                  <span class="trend-text">AI替代工作岗位讨论</span>
+                </div>
+                <div class="trend-item">
+                  <span class="trend-rank hot">2</span>
+                  <span class="trend-text">00后整顿职场</span>
+                </div>
+                <div class="trend-item">
+                  <span class="trend-rank">3</span>
+                  <span class="trend-text">副业月入过万实录</span>
+                </div>
+                <div class="trend-item">
+                  <span class="trend-rank">4</span>
+                  <span class="trend-text">35岁职场危机</span>
+                </div>
+                <div class="trend-item">
+                  <span class="trend-rank">5</span>
+                  <span class="trend-text">自媒体赚钱真相</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- Cookbook Section -->
+  <section class="cookbook-section" id="cookbook">
+    <div class="container">
+      <header class="cookbook-header" data-animate="fade-in-up">
+        <h2 class="cookbook-title">Cookbook</h2>
+        <p class="cookbook-subtitle">CreatorOS v2.0 设计文档 — 把内容创作从每天2-3小时压缩到15分钟</p>
+      </header>
+
+      <!-- 设计理念 -->
+      <div class="cookbook-card" data-animate="fade-in-up">
+        <h3 class="cookbook-card-title">
+          <span class="cookbook-icon">💡</span>
+          设计理念：从学习工具到执行工具
+        </h3>
+        <div class="cookbook-table-wrapper">
+          <table class="cookbook-table">
+            <thead>
+              <tr>
+                <th>维度</th>
+                <th>v1.0（课程导向）</th>
+                <th>v2.0（用户导向）</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>设计视角</strong></td>
+                <td>按课程章节组织</td>
+                <td>按用户行为组织</td>
+              </tr>
+              <tr>
+                <td><strong>定位频率</strong></td>
+                <td>每次使用都问"你是谁"</td>
+                <td>一次设置，永久复用</td>
+              </tr>
+              <tr>
+                <td><strong>核心价值</strong></td>
+                <td>教你怎么做</td>
+                <td>替你做决策</td>
+              </tr>
+              <tr>
+                <td><strong>AI角色</strong></td>
+                <td>辅助工具</td>
+                <td>核心引擎（80%自动化）</td>
+              </tr>
+              <tr>
+                <td><strong>用户时间</strong></td>
+                <td>学习2-3小时</td>
+                <td>执行15分钟</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- 五大原则 -->
+      <div class="cookbook-card" data-animate="fade-in-up">
+        <h3 class="cookbook-card-title">
+          <span class="cookbook-icon">🎯</span>
+          五大设计原则
+        </h3>
+        <div class="principles-grid">
+          <div class="principle-item">
+            <div class="principle-number">1</div>
+            <div class="principle-content">
+              <h4>设置一次，永久复用</h4>
+              <p class="principle-bad">❌ 每次打开都问"你的变现模式是什么？"</p>
+              <p class="principle-good">✅ 设置时采集一次 → 自动注入每次AI生成的上下文</p>
+            </div>
+          </div>
+          <div class="principle-item">
+            <div class="principle-number">2</div>
+            <div class="principle-content">
+              <h4>买家优先</h4>
+              <p class="principle-bad">❌ "我应该做什么内容？"（创作者中心）</p>
+              <p class="principle-good">✅ "买家需要看到什么才会付费？"（买家中心）</p>
+            </div>
+          </div>
+          <div class="principle-item">
+            <div class="principle-number">3</div>
+            <div class="principle-content">
+              <h4>先行动后完美</h4>
+              <p class="principle-bad">❌ 大量规划 → 完美内容 → 发布</p>
+              <p class="principle-good">✅ 快速生成 → 发布 → 学习 → 迭代</p>
+            </div>
+          </div>
+          <div class="principle-item">
+            <div class="principle-number">4</div>
+            <div class="principle-content">
+              <h4>抛弃错误心智模型</h4>
+              <p class="principle-bad">❌ 赛道、干货、垂直、精准流量</p>
+              <p class="principle-good">✅ 买家群体、买家转化、买家专属、合格买家</p>
+            </div>
+          </div>
+          <div class="principle-item">
+            <div class="principle-number">5</div>
+            <div class="principle-content">
+              <h4>AI做80%，人做20%</h4>
+              <p class="principle-note">AI自动：选题生成、脚本起草、热点监控、数据分析</p>
+              <p class="principle-note">人工处理：最终选择、个人故事、录制、战略调整</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 系统架构 -->
+      <div class="cookbook-card" data-animate="fade-in-up">
+        <h3 class="cookbook-card-title">
+          <span class="cookbook-icon">🏗️</span>
+          系统架构：双模式设计
+        </h3>
+        <div class="architecture-diagram">
+          <div class="arch-mode arch-setup">
+            <h4>设置模式<span class="arch-badge">一次性配置</span></h4>
+            <ul>
+              <li>买家画像定义</li>
+              <li>变现路径设计</li>
+              <li>创作者DNA</li>
+              <li>竞品情报</li>
+              <li>内容策略</li>
+            </ul>
+          </div>
+          <div class="arch-arrow">→</div>
+          <div class="arch-mode arch-daily">
+            <h4>日常模式<span class="arch-badge daily">每日使用</span></h4>
+            <ul>
+              <li>AI选题引擎</li>
+              <li>脚本生成器</li>
+              <li>素材助手</li>
+              <li>发布中心</li>
+              <li>数据仪表盘</li>
+            </ul>
+          </div>
+          <div class="arch-knowledge">
+            <h4>知识库</h4>
+            <p>你的策略配置 · 历史内容 · 数据表现 · 学习到的规则</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- 每日工作流 -->
+      <div class="cookbook-card" data-animate="fade-in-up">
+        <h3 class="cookbook-card-title">
+          <span class="cookbook-icon">⏱️</span>
+          每日工作流（15分钟完成）
+        </h3>
+        <div class="workflow-timeline">
+          <div class="workflow-phase">
+            <div class="phase-header">
+              <span class="phase-time">早晨</span>
+              <span class="phase-duration">5-10分钟</span>
+            </div>
+            <div class="phase-steps">
+              <div class="phase-step">1. 打开仪表盘 → 查看昨日数据 + AI生成的选题建议</div>
+              <div class="phase-step">2. 选择1-2个选题 → 点击"生成脚本"</div>
+              <div class="phase-step">3. 编辑确认 → 脚本保存到今日队列</div>
+            </div>
+          </div>
+          <div class="workflow-phase">
+            <div class="phase-header">
+              <span class="phase-time">制作</span>
+              <span class="phase-duration">时间不定</span>
+            </div>
+            <div class="phase-steps">
+              <div class="phase-step">4. 录制内容</div>
+              <div class="phase-step">5. 发布中心 → 自动生成平台文案 → 一键发布</div>
+            </div>
+          </div>
+          <div class="workflow-phase">
+            <div class="phase-header">
+              <span class="phase-time">晚间</span>
+              <span class="phase-duration">2-3分钟</span>
+            </div>
+            <div class="phase-steps">
+              <div class="phase-step">6. 快速复盘 → AI展示什么在起作用 → 反馈注入明天选题</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- AI选题引擎 -->
+      <div class="cookbook-card" data-animate="fade-in-up">
+        <h3 class="cookbook-card-title">
+          <span class="cookbook-icon">🤖</span>
+          AI选题引擎：四步工作流
+        </h3>
+        <div class="engine-flow">
+          <div class="engine-step">
+            <div class="step-icon">📥</div>
+            <h4>采集</h4>
+            <p>热点趋势<br>你的领域<br>历史爆款</p>
+          </div>
+          <div class="engine-arrow">→</div>
+          <div class="engine-step">
+            <div class="step-icon">⚡</div>
+            <h4>生成</h4>
+            <p>5-10个选题<br>带切入角度<br>标题草稿</p>
+          </div>
+          <div class="engine-arrow">→</div>
+          <div class="engine-step">
+            <div class="step-icon">✅</div>
+            <h4>审核</h4>
+            <p>逐个评分<br>通过/不通过<br>修改建议</p>
+          </div>
+          <div class="engine-arrow">→</div>
+          <div class="engine-step">
+            <div class="step-icon">📤</div>
+            <h4>输出</h4>
+            <p>结构化输出<br>事件+角度<br>+标题</p>
+          </div>
+        </div>
+        <div class="scoring-grid">
+          <h4>评分维度（满分100）</h4>
+          <div class="score-items">
+            <div class="score-item"><span class="score-weight">30%</span> 买家痛点匹配</div>
+            <div class="score-item"><span class="score-weight">25%</span> 变现路径关联</div>
+            <div class="score-item"><span class="score-weight">20%</span> 差异化程度</div>
+            <div class="score-item"><span class="score-weight">15%</span> 热度时效性</div>
+            <div class="score-item"><span class="score-weight">10%</span> 执行可行性</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 脚本类型 -->
+      <div class="cookbook-card" data-animate="fade-in-up">
+        <h3 class="cookbook-card-title">
+          <span class="cookbook-icon">📝</span>
+          四种脚本类型
+        </h3>
+        <div class="script-types-grid">
+          <div class="script-type">
+            <h4>晒过程</h4>
+            <p class="script-use">产品展示、服务可视化</p>
+            <p class="script-struct">场景→过程→结果→引导</p>
+          </div>
+          <div class="script-type">
+            <h4>教知识</h4>
+            <p class="script-use">专业展示、干货输出</p>
+            <p class="script-struct">痛点→方法→案例→总结</p>
+          </div>
+          <div class="script-type">
+            <h4>讲故事</h4>
+            <p class="script-use">品牌塑造、情感连接</p>
+            <p class="script-struct">困境→转折→启示→共鸣</p>
+          </div>
+          <div class="script-type">
+            <h4>聊观点</h4>
+            <p class="script-use">引发争议、展现态度</p>
+            <p class="script-struct">观点→论据→反驳→升华</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Credit -->
+      <div class="cookbook-credit" data-animate="fade-in-up">
+        <p>CreatorOS v2.0 · 基于薛辉课程 + 卡兹克AI选题系统 + Don哥商业方法论 · 2025年1月</p>
+      </div>
+    </div>
+  </section>
+
+  <style>
+    /* Cookbook Section Styles */
+    .cookbook-section {
+      background: linear-gradient(180deg, var(--bg-surface) 0%, var(--bg-primary) 100%);
+      padding: var(--space-16) 0;
+      border-top: 1px solid var(--border-color);
+    }
+
+    .cookbook-header {
+      text-align: center;
+      margin-bottom: var(--space-12);
+    }
+
+    .cookbook-title {
+      font-size: var(--text-3xl);
+      font-weight: 700;
+      margin-bottom: var(--space-3);
+      background: linear-gradient(135deg, var(--color-primary), var(--color-accent));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .cookbook-subtitle {
+      font-size: var(--text-lg);
+      color: var(--text-secondary);
+      max-width: 600px;
+      margin: 0 auto;
+    }
+
+    .cookbook-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-2xl);
+      padding: var(--space-8);
+      margin-bottom: var(--space-6);
+    }
+
+    .cookbook-card-title {
+      font-size: var(--text-xl);
+      font-weight: 600;
+      margin-bottom: var(--space-6);
+      display: flex;
+      align-items: center;
+      gap: var(--space-3);
+    }
+
+    .cookbook-icon {
+      font-size: var(--text-2xl);
+    }
+
+    /* Table Styles */
+    .cookbook-table-wrapper {
+      overflow-x: auto;
+    }
+
+    .cookbook-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: var(--text-sm);
+    }
+
+    .cookbook-table th,
+    .cookbook-table td {
+      padding: var(--space-3) var(--space-4);
+      text-align: left;
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    .cookbook-table th {
+      background: var(--bg-surface);
+      font-weight: 600;
+      color: var(--text-secondary);
+    }
+
+    .cookbook-table tr:last-child td {
+      border-bottom: none;
+    }
+
+    /* Principles Grid */
+    .principles-grid {
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-4);
+    }
+
+    .principle-item {
+      display: flex;
+      gap: var(--space-4);
+      padding: var(--space-4);
+      background: var(--bg-surface);
+      border-radius: var(--radius-xl);
+    }
+
+    .principle-number {
+      width: 32px;
+      height: 32px;
+      background: linear-gradient(135deg, var(--color-primary), var(--color-accent));
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      color: white;
+      flex-shrink: 0;
+    }
+
+    .principle-content h4 {
+      font-weight: 600;
+      margin-bottom: var(--space-2);
+    }
+
+    .principle-bad,
+    .principle-good,
+    .principle-note {
+      font-size: var(--text-sm);
+      margin: var(--space-1) 0;
+    }
+
+    .principle-bad {
+      color: var(--text-muted);
+    }
+
+    .principle-good {
+      color: var(--color-secondary);
+    }
+
+    .principle-note {
+      color: var(--text-secondary);
+    }
+
+    /* Architecture Diagram */
+    .architecture-diagram {
+      display: grid;
+      gap: var(--space-4);
+      text-align: center;
+    }
+
+    @media (min-width: 768px) {
+      .architecture-diagram {
+        grid-template-columns: 1fr auto 1fr;
+        grid-template-rows: auto auto;
+      }
+      
+      .arch-knowledge {
+        grid-column: 1 / -1;
+      }
+    }
+
+    .arch-mode {
+      background: var(--bg-surface);
+      border-radius: var(--radius-xl);
+      padding: var(--space-5);
+      border: 2px solid var(--border-color);
+    }
+
+    .arch-mode h4 {
+      font-weight: 600;
+      margin-bottom: var(--space-3);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: var(--space-2);
+      flex-wrap: wrap;
+    }
+
+    .arch-badge {
+      font-size: var(--text-xs);
+      padding: var(--space-1) var(--space-2);
+      background: rgba(255, 45, 85, 0.1);
+      color: var(--color-primary);
+      border-radius: var(--radius-full);
+      font-weight: 500;
+    }
+
+    .arch-badge.daily {
+      background: rgba(0, 212, 170, 0.1);
+      color: var(--color-secondary);
+    }
+
+    .arch-mode ul {
+      list-style: none;
+      font-size: var(--text-sm);
+      color: var(--text-secondary);
+    }
+
+    .arch-mode li {
+      padding: var(--space-1) 0;
+    }
+
+    .arch-arrow {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: var(--text-2xl);
+      color: var(--color-primary);
+      font-weight: bold;
+    }
+
+    .arch-knowledge {
+      background: linear-gradient(135deg, rgba(88, 86, 214, 0.1), rgba(255, 45, 85, 0.1));
+      border: 1px solid rgba(88, 86, 214, 0.3);
+      border-radius: var(--radius-xl);
+      padding: var(--space-4);
+      margin-top: var(--space-4);
+    }
+
+    .arch-knowledge h4 {
+      font-weight: 600;
+      color: var(--color-accent);
+      margin-bottom: var(--space-2);
+    }
+
+    .arch-knowledge p {
+      font-size: var(--text-sm);
+      color: var(--text-secondary);
+    }
+
+    /* Workflow Timeline */
+    .workflow-timeline {
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-4);
+    }
+
+    .workflow-phase {
+      background: var(--bg-surface);
+      border-radius: var(--radius-xl);
+      padding: var(--space-5);
+      border-left: 4px solid var(--color-primary);
+    }
+
+    .workflow-phase:nth-child(2) {
+      border-left-color: var(--color-accent);
+    }
+
+    .workflow-phase:nth-child(3) {
+      border-left-color: var(--color-secondary);
+    }
+
+    .phase-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: var(--space-3);
+    }
+
+    .phase-time {
+      font-weight: 600;
+      font-size: var(--text-lg);
+    }
+
+    .phase-duration {
+      font-size: var(--text-sm);
+      color: var(--text-muted);
+      background: var(--bg-elevated);
+      padding: var(--space-1) var(--space-3);
+      border-radius: var(--radius-full);
+    }
+
+    .phase-steps {
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-2);
+    }
+
+    .phase-step {
+      font-size: var(--text-sm);
+      color: var(--text-secondary);
+      padding-left: var(--space-3);
+      border-left: 2px solid var(--border-color);
+    }
+
+    /* Engine Flow */
+    .engine-flow {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      align-items: flex-start;
+      gap: var(--space-2);
+      margin-bottom: var(--space-6);
+    }
+
+    .engine-step {
+      background: var(--bg-surface);
+      border-radius: var(--radius-xl);
+      padding: var(--space-4);
+      text-align: center;
+      min-width: 120px;
+      flex: 1;
+      max-width: 160px;
+    }
+
+    .step-icon {
+      font-size: var(--text-2xl);
+      margin-bottom: var(--space-2);
+    }
+
+    .engine-step h4 {
+      font-weight: 600;
+      margin-bottom: var(--space-2);
+    }
+
+    .engine-step p {
+      font-size: var(--text-xs);
+      color: var(--text-secondary);
+      line-height: 1.5;
+    }
+
+    .engine-arrow {
+      display: flex;
+      align-items: center;
+      font-size: var(--text-xl);
+      color: var(--color-primary);
+      font-weight: bold;
+      padding-top: var(--space-8);
+    }
+
+    @media (max-width: 640px) {
+      .engine-arrow {
+        transform: rotate(90deg);
+        padding: var(--space-2) 0;
+      }
+    }
+
+    .scoring-grid h4 {
+      font-weight: 600;
+      margin-bottom: var(--space-4);
+      text-align: center;
+    }
+
+    .score-items {
+      display: flex;
+      flex-wrap: wrap;
+      gap: var(--space-3);
+      justify-content: center;
+    }
+
+    .score-item {
+      background: var(--bg-surface);
+      padding: var(--space-2) var(--space-4);
+      border-radius: var(--radius-lg);
+      font-size: var(--text-sm);
+      display: flex;
+      align-items: center;
+      gap: var(--space-2);
+    }
+
+    .score-weight {
+      background: linear-gradient(135deg, var(--color-primary), var(--color-accent));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      font-weight: 700;
+    }
+
+    /* Script Types Grid */
+    .script-types-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: var(--space-4);
+    }
+
+    @media (min-width: 768px) {
+      .script-types-grid {
+        grid-template-columns: repeat(4, 1fr);
+      }
+    }
+
+    .script-type {
+      background: var(--bg-surface);
+      border-radius: var(--radius-xl);
+      padding: var(--space-4);
+      text-align: center;
+      border: 1px solid var(--border-color);
+      transition: all var(--transition-base);
+    }
+
+    .script-type:hover {
+      border-color: var(--color-primary);
+      transform: translateY(-2px);
+    }
+
+    .script-type h4 {
+      font-weight: 600;
+      margin-bottom: var(--space-2);
+      color: var(--color-primary);
+    }
+
+    .script-use {
+      font-size: var(--text-xs);
+      color: var(--text-muted);
+      margin-bottom: var(--space-2);
+    }
+
+    .script-struct {
+      font-size: var(--text-sm);
+      color: var(--text-secondary);
+      background: var(--bg-elevated);
+      padding: var(--space-2);
+      border-radius: var(--radius-md);
+    }
+
+    /* Credit */
+    .cookbook-credit {
+      text-align: center;
+      padding-top: var(--space-8);
+      border-top: 1px solid var(--border-color);
+      margin-top: var(--space-8);
+    }
+
+    .cookbook-credit p {
+      font-size: var(--text-sm);
+      color: var(--text-muted);
+    }
+  </style>
+
+  <footer class="site-footer">
+    <div class="container">
+      <div class="footer-content">
+        <a href="index.html" class="logo">
+          <span class="logo-mark">CO</span>
+          <span class="logo-text">CreatorOS</span>
+        </a>
+        <nav class="footer-nav">
+          <a href="setup-wizard.html" class="footer-link">设置</a>
+          <a href="topic-engine.html" class="footer-link">选题</a>
+          <a href="script-generator.html" class="footer-link">脚本</a>
+          <a href="material-library.html" class="footer-link">素材</a>
+          <a href="publish-center.html" class="footer-link">发布</a>
+          <a href="#cookbook" class="footer-link">Cookbook</a>
+        </nav>
+      </div>
+      <p class="footer-credit mt-6">CreatorOS v2.0 · 2025</p>
+    </div>
+  </footer>
+
+  <script src="assets/js/main.js"></script>
+  <script>
+    // Check if setup is completed
+    const profile = localStorage.getItem('creatorOS_profile');
+    const setupPrompt = document.getElementById('setup-prompt');
+    const mainDashboard = document.getElementById('main-dashboard');
+    
+    if (profile) {
+      const data = JSON.parse(profile);
+      if (data.setupCompleted) {
+        setupPrompt.style.display = 'none';
+        mainDashboard.style.display = 'block';
+        
+        // Populate profile summary
+        if (data.buyer?.persona) {
+          const shortPersona = data.buyer.persona.length > 15 
+            ? data.buyer.persona.substring(0, 15) + '...' 
+            : data.buyer.persona;
+          document.getElementById('profile-buyer').textContent = shortPersona;
+        }
+        if (data.monetization?.model) {
+          document.getElementById('profile-monetization').textContent = data.monetization.model;
+        }
+        if (data.content?.cadence) {
+          document.getElementById('profile-cadence').textContent = data.content.cadence;
+        }
+        
+        // Demo stats
+        document.getElementById('stat-views').textContent = '12.5K';
+        document.getElementById('stat-views-change').textContent = '+23%';
+        document.getElementById('stat-likes').textContent = '856';
+        document.getElementById('stat-likes-change').textContent = '+15%';
+        document.getElementById('stat-comments').textContent = '124';
+        document.getElementById('stat-comments-change').textContent = '+8%';
+        document.getElementById('stat-followers').textContent = '+47';
+        document.getElementById('stat-followers-change').textContent = '+12%';
+      }
+    }
+    
+    // Greeting based on time
+    const hour = new Date().getHours();
+    const greeting = hour < 12 ? '早上好' : hour < 18 ? '下午好' : '晚上好';
+    document.querySelector('.page-title').textContent = `${greeting}，创作者`;
+  </script>
+</body>
+</html>

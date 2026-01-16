@@ -1,0 +1,965 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="CreatorOS - 发布中心">
+  <title>发布中心 - CreatorOS</title>
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%23FF2D55'/%3E%3Ctext x='16' y='21' font-family='system-ui' font-size='12' font-weight='bold' fill='white' text-anchor='middle'%3ECO%3C/text%3E%3C/svg%3E">
+  <link rel="stylesheet" href="assets/css/styles.css">
+  <style>
+    .publish-layout {
+      display: grid;
+      gap: var(--space-6);
+    }
+    
+    @media (min-width: 1024px) {
+      .publish-layout {
+        grid-template-columns: 1fr 380px;
+      }
+    }
+    
+    .queue-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-2xl);
+      overflow: hidden;
+    }
+    
+    .queue-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: var(--space-5) var(--space-6);
+      border-bottom: 1px solid var(--border-color);
+    }
+    
+    .queue-title {
+      font-size: var(--text-lg);
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: var(--space-2);
+    }
+    
+    .queue-count {
+      background: var(--color-primary);
+      color: white;
+      font-size: var(--text-xs);
+      padding: var(--space-1) var(--space-2);
+      border-radius: var(--radius-full);
+    }
+    
+    .queue-empty {
+      padding: var(--space-12);
+      text-align: center;
+      color: var(--text-secondary);
+    }
+    
+    .queue-empty-icon {
+      font-size: 3rem;
+      margin-bottom: var(--space-4);
+      opacity: 0.5;
+    }
+    
+    .queue-list {
+      padding: var(--space-4);
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-3);
+    }
+    
+    .queue-item {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-xl);
+      padding: var(--space-4);
+      cursor: pointer;
+      transition: all var(--transition-base);
+    }
+    
+    .queue-item:hover {
+      border-color: var(--color-accent);
+    }
+    
+    .queue-item.selected {
+      border-color: var(--color-primary);
+      background: rgba(255, 45, 85, 0.05);
+    }
+    
+    .queue-item-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: var(--space-2);
+    }
+    
+    .queue-item-type {
+      font-size: var(--text-xs);
+      color: var(--color-accent);
+      font-weight: 600;
+    }
+    
+    .queue-item-status {
+      font-size: var(--text-xs);
+      padding: var(--space-1) var(--space-2);
+      border-radius: var(--radius-full);
+    }
+    
+    .status-draft {
+      background: rgba(255, 149, 0, 0.2);
+      color: var(--color-warning);
+    }
+    
+    .status-ready {
+      background: rgba(0, 212, 170, 0.2);
+      color: var(--color-secondary);
+    }
+    
+    .status-scheduled {
+      background: rgba(88, 86, 214, 0.2);
+      color: var(--color-accent);
+    }
+    
+    .queue-item-title {
+      font-weight: 600;
+      margin-bottom: var(--space-2);
+      line-height: 1.4;
+    }
+    
+    .queue-item-meta {
+      display: flex;
+      gap: var(--space-3);
+      font-size: var(--text-xs);
+      color: var(--text-muted);
+    }
+    
+    .queue-item-actions {
+      display: flex;
+      gap: var(--space-2);
+      margin-top: var(--space-3);
+      padding-top: var(--space-3);
+      border-top: 1px solid var(--border-color);
+    }
+    
+    .queue-item-actions button {
+      flex: 1;
+      padding: var(--space-2);
+      font-size: var(--text-xs);
+      background: var(--bg-elevated);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-md);
+      color: var(--text-secondary);
+      cursor: pointer;
+      transition: all var(--transition-base);
+    }
+    
+    .queue-item-actions button:hover {
+      border-color: var(--color-primary);
+      color: var(--color-primary);
+    }
+    
+    .sidebar-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-xl);
+      padding: var(--space-5);
+      margin-bottom: var(--space-4);
+    }
+    
+    .sidebar-card-title {
+      font-size: var(--text-sm);
+      font-weight: 600;
+      margin-bottom: var(--space-4);
+      display: flex;
+      align-items: center;
+      gap: var(--space-2);
+    }
+    
+    .platform-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: var(--space-2);
+      margin-bottom: var(--space-4);
+    }
+    
+    .platform-btn {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: var(--space-2);
+      padding: var(--space-3);
+      background: var(--bg-surface);
+      border: 2px solid var(--border-color);
+      border-radius: var(--radius-lg);
+      cursor: pointer;
+      transition: all var(--transition-base);
+    }
+    
+    .platform-btn:hover {
+      border-color: var(--color-primary);
+    }
+    
+    .platform-btn.selected {
+      border-color: var(--color-primary);
+      background: rgba(255, 45, 85, 0.1);
+    }
+    
+    .platform-icon {
+      font-size: var(--text-xl);
+    }
+    
+    .platform-name {
+      font-size: var(--text-xs);
+      font-weight: 500;
+    }
+    
+    .copy-generator {
+      margin-top: var(--space-4);
+    }
+    
+    .copy-textarea {
+      width: 100%;
+      min-height: 120px;
+      padding: var(--space-3);
+      background: var(--bg-surface);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-lg);
+      color: var(--text-primary);
+      font-family: var(--font-sans);
+      font-size: var(--text-sm);
+      line-height: 1.6;
+      resize: vertical;
+      margin-bottom: var(--space-3);
+    }
+    
+    .copy-textarea:focus {
+      outline: none;
+      border-color: var(--color-primary);
+    }
+    
+    .copy-actions {
+      display: flex;
+      gap: var(--space-2);
+    }
+    
+    .copy-actions button {
+      flex: 1;
+    }
+    
+    .checklist-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-xl);
+      padding: var(--space-5);
+      margin-bottom: var(--space-4);
+    }
+    
+    .checklist {
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-2);
+    }
+    
+    .checklist-item {
+      display: flex;
+      align-items: center;
+      gap: var(--space-3);
+      padding: var(--space-3);
+      background: var(--bg-surface);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-lg);
+      cursor: pointer;
+      transition: all var(--transition-base);
+    }
+    
+    .checklist-item:hover {
+      border-color: var(--color-secondary);
+    }
+    
+    .checklist-item.checked {
+      border-color: var(--color-secondary);
+      background: rgba(0, 212, 170, 0.1);
+    }
+    
+    .checklist-box {
+      width: 20px;
+      height: 20px;
+      border: 2px solid var(--border-color);
+      border-radius: var(--radius-md);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      transition: all var(--transition-base);
+    }
+    
+    .checklist-item.checked .checklist-box {
+      background: var(--color-secondary);
+      border-color: var(--color-secondary);
+    }
+    
+    .checklist-box svg {
+      width: 12px;
+      height: 12px;
+      stroke: white;
+      stroke-width: 3;
+      opacity: 0;
+    }
+    
+    .checklist-item.checked .checklist-box svg {
+      opacity: 1;
+    }
+    
+    .checklist-text {
+      font-size: var(--text-sm);
+      color: var(--text-secondary);
+    }
+    
+    .checklist-item.checked .checklist-text {
+      color: var(--color-secondary);
+    }
+    
+    .progress-bar {
+      height: 6px;
+      background: var(--bg-elevated);
+      border-radius: var(--radius-full);
+      margin-top: var(--space-4);
+      overflow: hidden;
+    }
+    
+    .progress-fill {
+      height: 100%;
+      background: linear-gradient(90deg, var(--color-primary), var(--color-secondary));
+      border-radius: var(--radius-full);
+      transition: width 0.3s ease;
+    }
+    
+    .schedule-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-xl);
+      padding: var(--space-5);
+      margin-bottom: var(--space-4);
+    }
+    
+    .time-suggestion {
+      display: flex;
+      align-items: center;
+      gap: var(--space-3);
+      padding: var(--space-3);
+      background: rgba(0, 212, 170, 0.1);
+      border: 1px solid rgba(0, 212, 170, 0.3);
+      border-radius: var(--radius-lg);
+      margin-bottom: var(--space-4);
+    }
+    
+    .time-suggestion-icon {
+      font-size: var(--text-xl);
+    }
+    
+    .time-suggestion-text {
+      font-size: var(--text-sm);
+    }
+    
+    .time-suggestion-value {
+      color: var(--color-secondary);
+      font-weight: 600;
+    }
+    
+    .schedule-input {
+      width: 100%;
+      padding: var(--space-3);
+      background: var(--bg-surface);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-lg);
+      color: var(--text-primary);
+      font-family: var(--font-sans);
+      font-size: var(--text-sm);
+    }
+    
+    .schedule-input:focus {
+      outline: none;
+      border-color: var(--color-primary);
+    }
+    
+    .publish-actions {
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-3);
+    }
+    
+    .detail-panel {
+      display: none;
+    }
+    
+    .detail-panel.active {
+      display: block;
+    }
+    
+    .detail-header {
+      margin-bottom: var(--space-6);
+    }
+    
+    .detail-topic {
+      font-size: var(--text-xs);
+      color: var(--color-accent);
+      font-weight: 600;
+      margin-bottom: var(--space-2);
+    }
+    
+    .detail-title {
+      font-size: var(--text-xl);
+      font-weight: 600;
+      margin-bottom: var(--space-2);
+    }
+    
+    .detail-meta {
+      display: flex;
+      gap: var(--space-4);
+      font-size: var(--text-sm);
+      color: var(--text-muted);
+    }
+    
+    .script-preview {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-xl);
+      padding: var(--space-5);
+      margin-bottom: var(--space-6);
+      max-height: 300px;
+      overflow-y: auto;
+    }
+    
+    .script-preview-title {
+      font-size: var(--text-sm);
+      font-weight: 600;
+      color: var(--text-secondary);
+      margin-bottom: var(--space-3);
+    }
+    
+    .script-preview-content {
+      font-size: var(--text-sm);
+      line-height: 1.8;
+      white-space: pre-wrap;
+      color: var(--text-primary);
+    }
+    
+    .no-selection {
+      text-align: center;
+      padding: var(--space-12);
+      color: var(--text-secondary);
+    }
+    
+    .no-selection-icon {
+      font-size: 3rem;
+      margin-bottom: var(--space-4);
+      opacity: 0.5;
+    }
+  </style>
+</head>
+<body>
+  <!-- Header -->
+  <header class="site-header">
+    <div class="container">
+      <div class="site-header-inner">
+        <a href="index.html" class="logo">
+          <span class="logo-mark">CO</span>
+          <span class="logo-text">CreatorOS</span>
+        </a>
+        <nav class="desktop-nav">
+          <a href="index.html" class="nav-link">仪表盘</a>
+          <a href="setup-wizard.html" class="nav-link">设置</a>
+          <a href="topic-engine.html" class="nav-link">选题</a>
+          <a href="script-generator.html" class="nav-link">脚本</a>
+          <a href="material-library.html" class="nav-link">素材</a>
+          <a href="publish-center.html" class="nav-link active">发布</a>
+        </nav>
+        <button class="mobile-menu-btn" aria-label="Toggle menu">
+          <span class="hamburger-line"></span>
+          <span class="hamburger-line"></span>
+          <span class="hamburger-line"></span>
+        </button>
+      </div>
+    </div>
+  </header>
+  
+  <nav class="mobile-nav">
+    <a href="index.html" class="mobile-nav-link">仪表盘</a>
+    <a href="setup-wizard.html" class="mobile-nav-link">设置</a>
+    <a href="topic-engine.html" class="mobile-nav-link">选题</a>
+    <a href="script-generator.html" class="mobile-nav-link">脚本</a>
+    <a href="material-library.html" class="mobile-nav-link">素材</a>
+    <a href="publish-center.html" class="mobile-nav-link active">发布</a>
+  </nav>
+
+  <!-- Main Content -->
+  <main class="main-content">
+    <div class="container">
+      <header class="page-header" data-animate="fade-in-up">
+        <span class="page-eyebrow">内容发布</span>
+        <h1 class="page-title">发布中心</h1>
+        <p class="page-subtitle">管理发布队列，生成平台专属文案，一键发布到各平台</p>
+      </header>
+      
+      <div class="publish-layout">
+        <!-- Left: Queue List -->
+        <div>
+          <div class="queue-card" data-animate="fade-in-up">
+            <div class="queue-header">
+              <h2 class="queue-title">
+                📋 发布队列
+                <span class="queue-count" id="queue-count">0</span>
+              </h2>
+              <button class="btn btn-ghost btn-sm" onclick="clearQueue()">清空队列</button>
+            </div>
+            
+            <div id="queue-empty" class="queue-empty">
+              <div class="queue-empty-icon">📭</div>
+              <h3>队列为空</h3>
+              <p class="text-sm mb-4">从脚本生成器添加内容到发布队列</p>
+              <a href="script-generator.html" class="btn btn-primary btn-sm">去生成脚本</a>
+            </div>
+            
+            <div id="queue-list" class="queue-list" style="display: none;"></div>
+          </div>
+        </div>
+        
+        <!-- Right: Detail & Actions -->
+        <div>
+          <!-- No Selection State -->
+          <div id="no-selection" class="sidebar-card">
+            <div class="no-selection">
+              <div class="no-selection-icon">👈</div>
+              <h3>选择一个内容</h3>
+              <p class="text-sm">从左侧队列中选择要发布的内容</p>
+            </div>
+          </div>
+          
+          <!-- Detail Panel (hidden by default) -->
+          <div id="detail-panel" class="detail-panel">
+            <!-- Content Preview -->
+            <div class="sidebar-card" data-animate="fade-in-up">
+              <div class="detail-header">
+                <div class="detail-topic" id="detail-type">讲故事</div>
+                <h3 class="detail-title" id="detail-title">选题标题</h3>
+                <div class="detail-meta">
+                  <span id="detail-date">2025-01-16</span>
+                  <span id="detail-words">0 字</span>
+                </div>
+              </div>
+              
+              <div class="script-preview">
+                <div class="script-preview-title">📝 脚本预览</div>
+                <div class="script-preview-content" id="script-preview"></div>
+              </div>
+            </div>
+            
+            <!-- Platform Selection & Copy Generation -->
+            <div class="sidebar-card" data-animate="fade-in-up">
+              <h3 class="sidebar-card-title">📱 选择发布平台</h3>
+              <div class="platform-grid">
+                <div class="platform-btn selected" data-platform="douyin" onclick="selectPlatform(this)">
+                  <span class="platform-icon">🎵</span>
+                  <span class="platform-name">抖音</span>
+                </div>
+                <div class="platform-btn" data-platform="xiaohongshu" onclick="selectPlatform(this)">
+                  <span class="platform-icon">📕</span>
+                  <span class="platform-name">小红书</span>
+                </div>
+                <div class="platform-btn" data-platform="shipinhao" onclick="selectPlatform(this)">
+                  <span class="platform-icon">📺</span>
+                  <span class="platform-name">视频号</span>
+                </div>
+              </div>
+              
+              <div class="copy-generator">
+                <textarea class="copy-textarea" id="platform-copy" placeholder="点击生成按钮，AI将根据平台特点生成专属文案..."></textarea>
+                <div class="copy-actions">
+                  <button class="btn btn-secondary btn-sm" onclick="generatePlatformCopy()">🤖 生成文案</button>
+                  <button class="btn btn-ghost btn-sm" onclick="copyToClipboard()">📋 复制</button>
+                </div>
+              </div>
+            </div>
+            
+            <!-- Pre-publish Checklist -->
+            <div class="checklist-card" data-animate="fade-in-up">
+              <h3 class="sidebar-card-title">✅ 发布前检查</h3>
+              <div class="checklist" id="publish-checklist">
+                <label class="checklist-item" onclick="toggleCheck(this)">
+                  <span class="checklist-box"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><polyline points="20 6 9 17 4 12"/></svg></span>
+                  <span class="checklist-text">前3秒有钩子吸引注意</span>
+                </label>
+                <label class="checklist-item" onclick="toggleCheck(this)">
+                  <span class="checklist-box"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><polyline points="20 6 9 17 4 12"/></svg></span>
+                  <span class="checklist-text">包含买家痛点/需求</span>
+                </label>
+                <label class="checklist-item" onclick="toggleCheck(this)">
+                  <span class="checklist-box"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><polyline points="20 6 9 17 4 12"/></svg></span>
+                  <span class="checklist-text">有明确的行动号召（CTA）</span>
+                </label>
+                <label class="checklist-item" onclick="toggleCheck(this)">
+                  <span class="checklist-box"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><polyline points="20 6 9 17 4 12"/></svg></span>
+                  <span class="checklist-text">封面/标题有吸引力</span>
+                </label>
+                <label class="checklist-item" onclick="toggleCheck(this)">
+                  <span class="checklist-box"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><polyline points="20 6 9 17 4 12"/></svg></span>
+                  <span class="checklist-text">无违规敏感词</span>
+                </label>
+              </div>
+              <div class="progress-bar">
+                <div class="progress-fill" id="checklist-progress" style="width: 0%"></div>
+              </div>
+              <p class="text-xs text-muted mt-2" id="checklist-status">完成 0/5 项检查</p>
+            </div>
+            
+            <!-- Schedule -->
+            <div class="schedule-card" data-animate="fade-in-up">
+              <h3 class="sidebar-card-title">⏰ 发布时间</h3>
+              <div class="time-suggestion">
+                <span class="time-suggestion-icon">💡</span>
+                <span class="time-suggestion-text">
+                  建议发布时间：<span class="time-suggestion-value" id="suggested-time">20:00</span>
+                </span>
+              </div>
+              <input type="datetime-local" class="schedule-input" id="schedule-time">
+            </div>
+            
+            <!-- Publish Actions -->
+            <div class="publish-actions" data-animate="fade-in-up">
+              <button class="btn btn-primary" onclick="publishNow()" id="publish-btn">
+                🚀 立即发布
+              </button>
+              <button class="btn btn-secondary" onclick="schedulePublish()">
+                📅 定时发布
+              </button>
+              <button class="btn btn-ghost" onclick="markAsReady()">
+                ✓ 标记为待发布
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- Footer -->
+  <footer class="site-footer">
+    <div class="container">
+      <div class="footer-content">
+        <a href="index.html" class="logo">
+          <span class="logo-mark">CO</span>
+          <span class="logo-text">CreatorOS</span>
+        </a>
+        <nav class="footer-nav">
+          <a href="setup-wizard.html" class="footer-link">设置</a>
+          <a href="topic-engine.html" class="footer-link">选题</a>
+          <a href="script-generator.html" class="footer-link">脚本</a>
+          <a href="material-library.html" class="footer-link">素材</a>
+          <a href="publish-center.html" class="footer-link">发布</a>
+        </nav>
+      </div>
+    </div>
+  </footer>
+
+  <script src="assets/js/main.js"></script>
+  <script>
+    let publishQueue = [];
+    let selectedItem = null;
+    let selectedPlatform = 'douyin';
+    
+    const platformCopyTemplates = {
+      douyin: {
+        prefix: '#职场干货 #副业变现 #自媒体创业',
+        style: '简洁有力，适合快节奏浏览'
+      },
+      xiaohongshu: {
+        prefix: '✨ ',
+        style: '亲切自然，可用emoji，适当分段'
+      },
+      shipinhao: {
+        prefix: '',
+        style: '正式专业，适合较长的描述'
+      }
+    };
+    
+    function loadQueue() {
+      const data = localStorage.getItem('creatorOS_publishQueue');
+      publishQueue = data ? JSON.parse(data) : [];
+      renderQueue();
+    }
+    
+    function saveQueue() {
+      localStorage.setItem('creatorOS_publishQueue', JSON.stringify(publishQueue));
+    }
+    
+    function renderQueue() {
+      const count = publishQueue.length;
+      document.getElementById('queue-count').textContent = count;
+      
+      if (count === 0) {
+        document.getElementById('queue-empty').style.display = 'block';
+        document.getElementById('queue-list').style.display = 'none';
+        document.getElementById('no-selection').style.display = 'block';
+        document.getElementById('detail-panel').classList.remove('active');
+        return;
+      }
+      
+      document.getElementById('queue-empty').style.display = 'none';
+      document.getElementById('queue-list').style.display = 'flex';
+      
+      const list = document.getElementById('queue-list');
+      list.innerHTML = publishQueue.map((item, index) => `
+        <div class="queue-item ${selectedItem?.id === item.id ? 'selected' : ''}" 
+             data-index="${index}" 
+             onclick="selectQueueItem(${index})">
+          <div class="queue-item-header">
+            <span class="queue-item-type">${item.scriptType || '脚本'}</span>
+            <span class="queue-item-status ${getStatusClass(item.status)}">${getStatusText(item.status)}</span>
+          </div>
+          <div class="queue-item-title">${item.topic}</div>
+          <div class="queue-item-meta">
+            <span>${formatDate(item.createdAt)}</span>
+            <span>${item.content?.replace(/\s/g, '').length || 0} 字</span>
+          </div>
+          <div class="queue-item-actions">
+            <button onclick="event.stopPropagation(); editItem(${index})">编辑</button>
+            <button onclick="event.stopPropagation(); removeItem(${index})">删除</button>
+          </div>
+        </div>
+      `).join('');
+    }
+    
+    function getStatusClass(status) {
+      const classes = {
+        'draft': 'status-draft',
+        'ready': 'status-ready',
+        'scheduled': 'status-scheduled'
+      };
+      return classes[status] || 'status-draft';
+    }
+    
+    function getStatusText(status) {
+      const texts = {
+        'draft': '草稿',
+        'ready': '待发布',
+        'scheduled': '已排期'
+      };
+      return texts[status] || '草稿';
+    }
+    
+    function formatDate(dateStr) {
+      if (!dateStr) return '未知日期';
+      const date = new Date(dateStr);
+      return `${date.getMonth() + 1}/${date.getDate()} ${date.getHours()}:${String(date.getMinutes()).padStart(2, '0')}`;
+    }
+    
+    function selectQueueItem(index) {
+      selectedItem = publishQueue[index];
+      
+      document.querySelectorAll('.queue-item').forEach((el, i) => {
+        el.classList.toggle('selected', i === index);
+      });
+      
+      document.getElementById('no-selection').style.display = 'none';
+      document.getElementById('detail-panel').classList.add('active');
+      
+      // Populate detail panel
+      document.getElementById('detail-type').textContent = selectedItem.scriptType || '脚本';
+      document.getElementById('detail-title').textContent = selectedItem.topic;
+      document.getElementById('detail-date').textContent = formatDate(selectedItem.createdAt);
+      document.getElementById('detail-words').textContent = `${selectedItem.content?.replace(/\s/g, '').length || 0} 字`;
+      document.getElementById('script-preview').textContent = selectedItem.content || '无内容';
+      
+      // Reset checklist
+      document.querySelectorAll('.checklist-item').forEach(item => item.classList.remove('checked'));
+      updateChecklistProgress();
+      
+      // Reset platform copy
+      document.getElementById('platform-copy').value = '';
+      
+      // Set suggested time
+      updateSuggestedTime();
+    }
+    
+    function selectPlatform(el) {
+      document.querySelectorAll('.platform-btn').forEach(btn => btn.classList.remove('selected'));
+      el.classList.add('selected');
+      selectedPlatform = el.dataset.platform;
+      document.getElementById('platform-copy').value = '';
+    }
+    
+    function generatePlatformCopy() {
+      if (!selectedItem) return;
+      
+      const template = platformCopyTemplates[selectedPlatform];
+      const topic = selectedItem.topic;
+      
+      let copy = '';
+      
+      switch (selectedPlatform) {
+        case 'douyin':
+          copy = `${topic}\n\n${template.prefix}`;
+          break;
+        case 'xiaohongshu':
+          copy = `${template.prefix}${topic}\n\n💡 看完这条视频你会知道：\n1️⃣ 为什么说选择比努力重要\n2️⃣ 普通人怎么找到适合自己的方向\n3️⃣ 一个可以立即执行的方法\n\n📌 记得收藏，反复看！`;
+          break;
+        case 'shipinhao':
+          copy = `【${topic}】\n\n如果你也在思考这个问题，这条视频一定对你有帮助。\n\n分享给需要的朋友，一起成长！`;
+          break;
+      }
+      
+      document.getElementById('platform-copy').value = copy;
+    }
+    
+    function copyToClipboard() {
+      const textarea = document.getElementById('platform-copy');
+      textarea.select();
+      document.execCommand('copy');
+      alert('已复制到剪贴板');
+    }
+    
+    function toggleCheck(el) {
+      el.classList.toggle('checked');
+      updateChecklistProgress();
+    }
+    
+    function updateChecklistProgress() {
+      const total = document.querySelectorAll('.checklist-item').length;
+      const checked = document.querySelectorAll('.checklist-item.checked').length;
+      const percentage = Math.round((checked / total) * 100);
+      
+      document.getElementById('checklist-progress').style.width = `${percentage}%`;
+      document.getElementById('checklist-status').textContent = `完成 ${checked}/${total} 项检查`;
+      
+      // Update publish button state
+      const publishBtn = document.getElementById('publish-btn');
+      if (checked === total) {
+        publishBtn.textContent = '🚀 立即发布';
+        publishBtn.disabled = false;
+      } else {
+        publishBtn.textContent = `🚀 立即发布 (${checked}/${total})`;
+      }
+    }
+    
+    function updateSuggestedTime() {
+      const now = new Date();
+      const hour = now.getHours();
+      
+      let suggestedHour = 20;
+      if (hour < 12) suggestedHour = 12;
+      else if (hour < 18) suggestedHour = 18;
+      else if (hour < 20) suggestedHour = 20;
+      else suggestedHour = 21;
+      
+      document.getElementById('suggested-time').textContent = `${suggestedHour}:00`;
+      
+      const scheduleDate = new Date();
+      if (hour >= suggestedHour) {
+        scheduleDate.setDate(scheduleDate.getDate() + 1);
+      }
+      scheduleDate.setHours(suggestedHour, 0, 0, 0);
+      
+      const localDatetime = scheduleDate.toISOString().slice(0, 16);
+      document.getElementById('schedule-time').value = localDatetime;
+    }
+    
+    function editItem(index) {
+      const item = publishQueue[index];
+      localStorage.setItem('creatorOS_selectedTopic', JSON.stringify({
+        title: item.topic,
+        type: item.scriptType
+      }));
+      window.location.href = 'script-generator.html';
+    }
+    
+    function removeItem(index) {
+      if (confirm('确定要删除这条内容吗？')) {
+        publishQueue.splice(index, 1);
+        saveQueue();
+        selectedItem = null;
+        renderQueue();
+        document.getElementById('no-selection').style.display = 'block';
+        document.getElementById('detail-panel').classList.remove('active');
+      }
+    }
+    
+    function clearQueue() {
+      if (confirm('确定要清空发布队列吗？')) {
+        publishQueue = [];
+        saveQueue();
+        selectedItem = null;
+        renderQueue();
+      }
+    }
+    
+    function markAsReady() {
+      if (!selectedItem) return;
+      
+      const index = publishQueue.findIndex(item => item.id === selectedItem.id);
+      if (index !== -1) {
+        publishQueue[index].status = 'ready';
+        saveQueue();
+        renderQueue();
+        selectQueueItem(index);
+        alert('已标记为待发布');
+      }
+    }
+    
+    function schedulePublish() {
+      if (!selectedItem) return;
+      
+      const scheduleTime = document.getElementById('schedule-time').value;
+      if (!scheduleTime) {
+        alert('请选择发布时间');
+        return;
+      }
+      
+      const index = publishQueue.findIndex(item => item.id === selectedItem.id);
+      if (index !== -1) {
+        publishQueue[index].status = 'scheduled';
+        publishQueue[index].scheduledAt = scheduleTime;
+        saveQueue();
+        renderQueue();
+        selectQueueItem(index);
+        alert(`已设置定时发布：${new Date(scheduleTime).toLocaleString()}`);
+      }
+    }
+    
+    function publishNow() {
+      if (!selectedItem) return;
+      
+      const checkedCount = document.querySelectorAll('.checklist-item.checked').length;
+      const totalCount = document.querySelectorAll('.checklist-item').length;
+      
+      if (checkedCount < totalCount) {
+        if (!confirm(`还有 ${totalCount - checkedCount} 项检查未完成，确定要发布吗？`)) {
+          return;
+        }
+      }
+      
+      const platformNames = {
+        'douyin': '抖音',
+        'xiaohongshu': '小红书',
+        'shipinhao': '视频号'
+      };
+      
+      alert(`✅ 内容已准备好发布到${platformNames[selectedPlatform]}！\n\n实际发布请在对应平台完成。\n文案已可复制使用。`);
+      
+      // Remove from queue after "publishing"
+      const index = publishQueue.findIndex(item => item.id === selectedItem.id);
+      if (index !== -1) {
+        publishQueue.splice(index, 1);
+        saveQueue();
+        selectedItem = null;
+        renderQueue();
+        document.getElementById('no-selection').style.display = 'block';
+        document.getElementById('detail-panel').classList.remove('active');
+      }
+    }
+    
+    // Initialize
+    loadQueue();
+  </script>
+</body>
+</html>

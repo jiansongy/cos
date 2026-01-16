@@ -1,0 +1,808 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="CreatorOS - 脚本生成器">
+  <title>脚本生成器 - CreatorOS</title>
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%23FF2D55'/%3E%3Ctext x='16' y='21' font-family='system-ui' font-size='12' font-weight='bold' fill='white' text-anchor='middle'%3ECO%3C/text%3E%3C/svg%3E">
+  <link rel="stylesheet" href="assets/css/styles.css">
+  <style>
+    .generator-layout {
+      display: grid;
+      gap: var(--space-6);
+    }
+    
+    @media (min-width: 1024px) {
+      .generator-layout {
+        grid-template-columns: 1fr 350px;
+      }
+    }
+    
+    .topic-preview {
+      background: linear-gradient(135deg, rgba(88, 86, 214, 0.1), rgba(255, 45, 85, 0.1));
+      border: 1px solid rgba(88, 86, 214, 0.2);
+      border-radius: var(--radius-xl);
+      padding: var(--space-5);
+      margin-bottom: var(--space-6);
+    }
+    
+    .topic-preview-label {
+      font-size: var(--text-xs);
+      color: var(--color-accent);
+      font-weight: 600;
+      margin-bottom: var(--space-2);
+    }
+    
+    .topic-preview-title {
+      font-size: var(--text-lg);
+      font-weight: 600;
+    }
+    
+    .script-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-2xl);
+      padding: var(--space-6);
+      margin-bottom: var(--space-6);
+    }
+    
+    .script-card-title {
+      font-size: var(--text-lg);
+      font-weight: 600;
+      margin-bottom: var(--space-4);
+      display: flex;
+      align-items: center;
+      gap: var(--space-2);
+    }
+    
+    .script-type-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: var(--space-3);
+    }
+    
+    @media (min-width: 640px) {
+      .script-type-grid { grid-template-columns: repeat(4, 1fr); }
+    }
+    
+    .script-type-card {
+      background: var(--bg-surface);
+      border: 2px solid var(--border-color);
+      border-radius: var(--radius-lg);
+      padding: var(--space-4);
+      text-align: center;
+      cursor: pointer;
+      transition: all var(--transition-base);
+    }
+    
+    .script-type-card:hover {
+      border-color: var(--color-accent);
+    }
+    
+    .script-type-card.selected {
+      border-color: var(--color-accent);
+      background: rgba(88, 86, 214, 0.1);
+    }
+    
+    .script-type-icon {
+      font-size: var(--text-2xl);
+      margin-bottom: var(--space-2);
+    }
+    
+    .script-type-name {
+      font-weight: 600;
+      font-size: var(--text-sm);
+    }
+    
+    .script-editor {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-xl);
+      overflow: hidden;
+    }
+    
+    .script-editor-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: var(--space-3) var(--space-4);
+      background: var(--bg-elevated);
+      border-bottom: 1px solid var(--border-color);
+    }
+    
+    .script-editor-tabs {
+      display: flex;
+      gap: var(--space-1);
+    }
+    
+    .script-editor-tab {
+      padding: var(--space-2) var(--space-4);
+      background: transparent;
+      border: none;
+      color: var(--text-secondary);
+      font-size: var(--text-sm);
+      cursor: pointer;
+      border-radius: var(--radius-md);
+      transition: all var(--transition-base);
+    }
+    
+    .script-editor-tab:hover {
+      background: var(--bg-surface);
+    }
+    
+    .script-editor-tab.active {
+      background: var(--color-primary);
+      color: white;
+    }
+    
+    .script-editor-content {
+      padding: var(--space-4);
+    }
+    
+    .script-textarea {
+      width: 100%;
+      min-height: 400px;
+      padding: var(--space-4);
+      background: var(--bg-dark);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-lg);
+      color: var(--text-primary);
+      font-family: var(--font-sans);
+      font-size: var(--text-base);
+      line-height: 1.8;
+      resize: vertical;
+    }
+    
+    .script-textarea:focus {
+      outline: none;
+      border-color: var(--color-primary);
+    }
+    
+    .script-section {
+      margin-bottom: var(--space-6);
+    }
+    
+    .script-section-title {
+      font-size: var(--text-sm);
+      font-weight: 600;
+      color: var(--text-secondary);
+      margin-bottom: var(--space-3);
+      display: flex;
+      align-items: center;
+      gap: var(--space-2);
+    }
+    
+    .hook-options {
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-2);
+    }
+    
+    .hook-option {
+      display: flex;
+      align-items: flex-start;
+      gap: var(--space-3);
+      padding: var(--space-3);
+      background: var(--bg-surface);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-lg);
+      cursor: pointer;
+      transition: all var(--transition-base);
+    }
+    
+    .hook-option:hover {
+      border-color: var(--color-primary);
+    }
+    
+    .hook-option.selected {
+      border-color: var(--color-primary);
+      background: rgba(255, 45, 85, 0.1);
+    }
+    
+    .hook-radio {
+      width: 18px;
+      height: 18px;
+      border: 2px solid var(--border-color);
+      border-radius: 50%;
+      flex-shrink: 0;
+      margin-top: 2px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    
+    .hook-option.selected .hook-radio {
+      border-color: var(--color-primary);
+    }
+    
+    .hook-option.selected .hook-radio::after {
+      content: '';
+      width: 8px;
+      height: 8px;
+      background: var(--color-primary);
+      border-radius: 50%;
+    }
+    
+    .hook-text {
+      font-size: var(--text-sm);
+      line-height: 1.5;
+    }
+    
+    .cta-options {
+      display: flex;
+      flex-wrap: wrap;
+      gap: var(--space-2);
+    }
+    
+    .cta-chip {
+      padding: var(--space-2) var(--space-4);
+      background: var(--bg-surface);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-full);
+      font-size: var(--text-sm);
+      cursor: pointer;
+      transition: all var(--transition-base);
+    }
+    
+    .cta-chip:hover {
+      border-color: var(--color-secondary);
+    }
+    
+    .cta-chip.selected {
+      border-color: var(--color-secondary);
+      background: rgba(0, 212, 170, 0.1);
+      color: var(--color-secondary);
+    }
+    
+    .sidebar-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-xl);
+      padding: var(--space-5);
+      margin-bottom: var(--space-4);
+    }
+    
+    .sidebar-card-title {
+      font-size: var(--text-sm);
+      font-weight: 600;
+      margin-bottom: var(--space-3);
+      display: flex;
+      align-items: center;
+      gap: var(--space-2);
+    }
+    
+    .structure-list {
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-2);
+    }
+    
+    .structure-item {
+      display: flex;
+      align-items: center;
+      gap: var(--space-3);
+      padding: var(--space-2);
+      background: var(--bg-surface);
+      border-radius: var(--radius-md);
+    }
+    
+    .structure-number {
+      width: 24px;
+      height: 24px;
+      background: var(--bg-elevated);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: var(--text-xs);
+      font-weight: 600;
+      color: var(--text-muted);
+    }
+    
+    .structure-text {
+      font-size: var(--text-sm);
+      color: var(--text-secondary);
+    }
+    
+    .word-count {
+      font-family: var(--font-mono);
+      font-size: var(--text-sm);
+      color: var(--text-muted);
+    }
+    
+    .checklist {
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-2);
+    }
+    
+    .checklist-item {
+      display: flex;
+      align-items: center;
+      gap: var(--space-2);
+      font-size: var(--text-sm);
+      color: var(--text-secondary);
+    }
+    
+    .checklist-item.checked {
+      color: var(--color-secondary);
+    }
+    
+    .checklist-icon {
+      width: 16px;
+      height: 16px;
+    }
+    
+    .action-buttons {
+      display: flex;
+      gap: var(--space-3);
+      margin-top: var(--space-6);
+    }
+    
+    .action-buttons .btn {
+      flex: 1;
+    }
+    
+    .no-topic-state {
+      text-align: center;
+      padding: var(--space-12);
+    }
+    
+    .no-topic-icon {
+      font-size: 4rem;
+      margin-bottom: var(--space-4);
+      opacity: 0.5;
+    }
+  </style>
+</head>
+<body>
+  <header class="site-header">
+    <div class="container">
+      <div class="site-header-inner">
+        <a href="index.html" class="logo">
+          <span class="logo-mark">CO</span>
+          <span class="logo-text">CreatorOS</span>
+        </a>
+        <nav class="desktop-nav">
+          <a href="index.html" class="nav-link">仪表盘</a>
+          <a href="setup-wizard.html" class="nav-link">设置</a>
+          <a href="topic-engine.html" class="nav-link">选题</a>
+          <a href="script-generator.html" class="nav-link active">脚本</a>
+          <a href="material-library.html" class="nav-link">素材</a>
+          <a href="publish-center.html" class="nav-link">发布</a>
+        </nav>
+        <button class="mobile-menu-btn" aria-label="Toggle menu">
+          <span class="hamburger-line"></span>
+          <span class="hamburger-line"></span>
+          <span class="hamburger-line"></span>
+        </button>
+      </div>
+    </div>
+  </header>
+  
+  <nav class="mobile-nav">
+    <a href="index.html" class="mobile-nav-link">仪表盘</a>
+    <a href="setup-wizard.html" class="mobile-nav-link">设置</a>
+    <a href="topic-engine.html" class="mobile-nav-link">选题</a>
+    <a href="script-generator.html" class="mobile-nav-link">脚本</a>
+    <a href="material-library.html" class="mobile-nav-link">素材</a>
+    <a href="publish-center.html" class="mobile-nav-link">发布</a>
+  </nav>
+
+  <main class="main-content">
+    <div class="container">
+      <header class="page-header" data-animate="fade-in-up">
+        <span class="page-eyebrow">脚本工坊</span>
+        <h1 class="page-title">脚本生成器</h1>
+        <p class="page-subtitle">基于选题和你的风格DNA，生成结构化脚本</p>
+      </header>
+      
+      <div id="main-content">
+        <div class="topic-preview" data-animate="fade-in-up" id="topic-preview">
+          <div class="topic-preview-label">当前选题</div>
+          <div class="topic-preview-title" id="selected-topic-title">请先从选题引擎选择一个选题</div>
+        </div>
+        
+        <div class="generator-layout">
+          <div>
+            <div class="script-card" data-animate="fade-in-up">
+              <h2 class="script-card-title">📝 选择脚本类型</h2>
+              <div class="script-type-grid" id="script-type-grid">
+                <div class="script-type-card" data-type="晒过程" onclick="selectScriptType(this)">
+                  <div class="script-type-icon">📸</div>
+                  <div class="script-type-name">晒过程</div>
+                </div>
+                <div class="script-type-card" data-type="教知识" onclick="selectScriptType(this)">
+                  <div class="script-type-icon">📚</div>
+                  <div class="script-type-name">教知识</div>
+                </div>
+                <div class="script-type-card" data-type="讲故事" onclick="selectScriptType(this)">
+                  <div class="script-type-icon">📖</div>
+                  <div class="script-type-name">讲故事</div>
+                </div>
+                <div class="script-type-card" data-type="聊观点" onclick="selectScriptType(this)">
+                  <div class="script-type-icon">💬</div>
+                  <div class="script-type-name">聊观点</div>
+                </div>
+              </div>
+            </div>
+            
+            <div class="script-card" data-animate="fade-in-up">
+              <h2 class="script-card-title">🎣 选择开头钩子</h2>
+              <div class="hook-options" id="hook-options">
+                <div class="hook-option selected" data-hook="1" onclick="selectHook(this)">
+                  <div class="hook-radio"></div>
+                  <div class="hook-text">被裁后收入反而涨了？听我说完，你会发现这不是鸡汤。</div>
+                </div>
+                <div class="hook-option" data-hook="2" onclick="selectHook(this)">
+                  <div class="hook-radio"></div>
+                  <div class="hook-text">大厂10年不如副业3个月，我不是在凡尔赛，我是在说真话。</div>
+                </div>
+                <div class="hook-option" data-hook="3" onclick="selectHook(this)">
+                  <div class="hook-radio"></div>
+                  <div class="hook-text">如果你也在35岁前后焦虑，这条视频可能会改变你的想法。</div>
+                </div>
+              </div>
+            </div>
+            
+            <div class="script-card" data-animate="fade-in-up">
+              <h2 class="script-card-title">🎯 选择CTA（行动号召）</h2>
+              <div class="cta-options" id="cta-options">
+                <div class="cta-chip selected" onclick="selectCTA(this)">关注了解更多</div>
+                <div class="cta-chip" onclick="selectCTA(this)">评论区留言</div>
+                <div class="cta-chip" onclick="selectCTA(this)">私信领取资料</div>
+                <div class="cta-chip" onclick="selectCTA(this)">点击购物车</div>
+                <div class="cta-chip" onclick="selectCTA(this)">点赞收藏</div>
+              </div>
+            </div>
+            
+            <div class="script-card" data-animate="fade-in-up">
+              <h2 class="script-card-title">✍️ 脚本内容</h2>
+              <div class="script-editor">
+                <div class="script-editor-header">
+                  <div class="script-editor-tabs">
+                    <button class="script-editor-tab active">编辑</button>
+                    <button class="script-editor-tab">预览</button>
+                  </div>
+                  <span class="word-count" id="word-count">0 字</span>
+                </div>
+                <div class="script-editor-content">
+                  <textarea class="script-textarea" id="script-content" placeholder="点击「生成脚本」按钮，AI将根据你的选择生成脚本..." oninput="updateWordCount()"></textarea>
+                </div>
+              </div>
+              
+              <div class="action-buttons">
+                <button class="btn btn-primary" onclick="generateScript()">🤖 AI生成脚本</button>
+                <button class="btn btn-secondary" onclick="saveToQueue()">添加到发布队列</button>
+              </div>
+            </div>
+          </div>
+          
+          <div>
+            <div class="sidebar-card" data-animate="fade-in-up">
+              <h3 class="sidebar-card-title">📋 脚本结构</h3>
+              <div class="structure-list" id="structure-list">
+                <div class="structure-item">
+                  <span class="structure-number">1</span>
+                  <span class="structure-text">开头钩子（3秒内）</span>
+                </div>
+                <div class="structure-item">
+                  <span class="structure-number">2</span>
+                  <span class="structure-text">困境描述</span>
+                </div>
+                <div class="structure-item">
+                  <span class="structure-number">3</span>
+                  <span class="structure-text">转折点</span>
+                </div>
+                <div class="structure-item">
+                  <span class="structure-number">4</span>
+                  <span class="structure-text">解决方案</span>
+                </div>
+                <div class="structure-item">
+                  <span class="structure-number">5</span>
+                  <span class="structure-text">行动号召</span>
+                </div>
+              </div>
+            </div>
+            
+            <div class="sidebar-card" data-animate="fade-in-up">
+              <h3 class="sidebar-card-title">✅ 质量检查</h3>
+              <div class="checklist" id="checklist">
+                <div class="checklist-item" id="check-hook">
+                  <svg class="checklist-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="12" cy="12" r="10"/>
+                  </svg>
+                  <span>前3秒有钩子</span>
+                </div>
+                <div class="checklist-item" id="check-pain">
+                  <svg class="checklist-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="12" cy="12" r="10"/>
+                  </svg>
+                  <span>关联买家痛点</span>
+                </div>
+                <div class="checklist-item" id="check-cta">
+                  <svg class="checklist-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="12" cy="12" r="10"/>
+                  </svg>
+                  <span>包含行动号召</span>
+                </div>
+                <div class="checklist-item" id="check-length">
+                  <svg class="checklist-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="12" cy="12" r="10"/>
+                  </svg>
+                  <span>字数适中（200-500）</span>
+                </div>
+              </div>
+            </div>
+            
+            <div class="sidebar-card" data-animate="fade-in-up">
+              <h3 class="sidebar-card-title">💡 写作提示</h3>
+              <p class="text-sm text-secondary" id="writing-tip">
+                讲故事类脚本的核心是「共情」。先描述困境让观众代入，再通过转折展示可能性，最后给出可执行的建议。
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <div id="no-topic-state" class="no-topic-state" style="display: none;">
+        <div class="no-topic-icon">📝</div>
+        <h3>还没有选择选题</h3>
+        <p class="text-secondary mb-6">请先从AI选题引擎选择一个选题</p>
+        <a href="topic-engine.html" class="btn btn-primary">去选择选题</a>
+      </div>
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container">
+      <div class="footer-content">
+        <a href="index.html" class="logo">
+          <span class="logo-mark">CO</span>
+          <span class="logo-text">CreatorOS</span>
+        </a>
+        <nav class="footer-nav">
+          <a href="setup-wizard.html" class="footer-link">设置</a>
+          <a href="topic-engine.html" class="footer-link">选题</a>
+          <a href="script-generator.html" class="footer-link">脚本</a>
+          <a href="material-library.html" class="footer-link">素材</a>
+          <a href="publish-center.html" class="footer-link">发布</a>
+        </nav>
+      </div>
+    </div>
+  </footer>
+
+  <script src="assets/js/main.js"></script>
+  <script>
+    let selectedTopic = null;
+    let selectedScriptType = '讲故事';
+    let selectedHook = 1;
+    let selectedCTA = '关注了解更多';
+    
+    const scriptStructures = {
+      '晒过程': ['场景展示', '过程记录', '结果呈现', '引导互动'],
+      '教知识': ['痛点提问', '方法讲解', '案例说明', '总结强调'],
+      '讲故事': ['困境描述', '转折点', '解决方案', '启示分享'],
+      '聊观点': ['观点抛出', '论据支撑', '反驳预设', '升华总结']
+    };
+    
+    const scriptTemplates = {
+      '讲故事': `【开头钩子】
+被裁后收入反而涨了？听我说完，你会发现这不是鸡汤。
+
+【困境描述】
+去年这个时候，我还在大厂熬夜加班，每天焦虑得睡不着觉。
+35岁，上有老下有小，房贷车贷一个不少。
+然后，裁员通知就这么来了。
+
+【转折点】
+但神奇的是，被裁的第三个月，我的副业收入超过了之前的工资。
+不是因为我有多牛，而是因为我终于想明白了一件事——
+在大厂，你是在用时间换钱。
+做副业，你是在用经验换钱。
+
+【解决方案】
+我做了三件事：
+第一，把10年的职场经验，整理成可复用的方法论
+第二，用短视频分享给有同样困惑的人
+第三，把深度内容变成付费课程
+
+【行动号召】
+如果你也在35岁前后焦虑，不妨换个思路。
+关注我，我会持续分享从打工人到创作者的转型经验。`,
+      
+      '教知识': `【开头钩子】
+每天30分钟做副业，3个月涨到10万粉，我的方法你也能复制。
+
+【痛点提问】
+很多人说没时间做副业，其实是没找对方法。
+你真的需要每天花3-4小时吗？不需要。
+
+【方法讲解】
+我的时间分配是这样的：
+早上通勤15分钟，用语音记录选题灵感
+午休30分钟，把灵感整理成脚本大纲
+晚上睡前15分钟，检查明天要发的内容
+
+【案例说明】
+用这个方法，我在3个月内：
+发布了90条内容，涨了10万粉
+最重要的是，没有一次熬夜
+
+【总结强调】
+副业不是拼时间，是拼效率。
+关注我，下期教你如何用AI提升10倍效率。`,
+      
+      '晒过程': `【场景展示】
+今天带你们看看，一个普通人的副业日常是什么样的。
+
+【过程记录】
+早上7点，趁娃还没醒，我先花15分钟看看昨天的数据
+一条视频播放量破了5万，赶紧记下来这个选题方向
+
+中午12点半，午休时间不刷短视频了
+打开备忘录，把早上想到的点子写成脚本
+
+晚上9点，孩子睡了，开始录制
+其实就对着手机说5分钟，然后简单剪一下
+
+【结果呈现】
+就这样，一天30分钟
+三个月下来，粉丝从0到了10万
+
+【引导互动】
+有人问我秘诀是什么，其实就两个字：坚持
+想知道我的选题方法？评论区告诉我。`,
+      
+      '聊观点': `【观点抛出】
+说个可能得罪人的话：副业比主业更容易成功。
+
+【论据支撑】
+为什么这么说？
+在公司，你做的事情是别人定义的
+做副业，你做的是自己擅长且喜欢的
+
+在公司，你的价值被人力资源部定价
+做副业，你的价值由市场直接定价
+
+在公司，你的成长速度受限于组织
+做副业，你的成长速度只受限于你自己
+
+【反驳预设】
+有人说副业不稳定，那我问你
+大厂裁员的时候，谁稳定了？
+
+【升华总结】
+真正的安全感，不是来自一份工作
+而是来自你随时都有选择的能力
+关注我，一起探索工作之外的可能性。`
+    };
+    
+    function loadSelectedTopic() {
+      const topicData = localStorage.getItem('creatorOS_selectedTopic');
+      if (topicData) {
+        selectedTopic = JSON.parse(topicData);
+        document.getElementById('selected-topic-title').textContent = selectedTopic.title;
+        
+        if (selectedTopic.type) {
+          const typeCard = document.querySelector(`[data-type="${selectedTopic.type}"]`);
+          if (typeCard) {
+            selectScriptType(typeCard);
+          }
+        }
+      } else {
+        document.getElementById('main-content').style.display = 'none';
+        document.getElementById('no-topic-state').style.display = 'block';
+      }
+    }
+    
+    function selectScriptType(el) {
+      document.querySelectorAll('.script-type-card').forEach(c => c.classList.remove('selected'));
+      el.classList.add('selected');
+      selectedScriptType = el.dataset.type;
+      updateStructure();
+      updateWritingTip();
+    }
+    
+    function selectHook(el) {
+      document.querySelectorAll('.hook-option').forEach(c => c.classList.remove('selected'));
+      el.classList.add('selected');
+      selectedHook = el.dataset.hook;
+    }
+    
+    function selectCTA(el) {
+      document.querySelectorAll('.cta-chip').forEach(c => c.classList.remove('selected'));
+      el.classList.add('selected');
+      selectedCTA = el.textContent;
+    }
+    
+    function updateStructure() {
+      const structure = scriptStructures[selectedScriptType] || scriptStructures['讲故事'];
+      const list = document.getElementById('structure-list');
+      list.innerHTML = structure.map((item, i) => `
+        <div class="structure-item">
+          <span class="structure-number">${i + 1}</span>
+          <span class="structure-text">${item}</span>
+        </div>
+      `).join('');
+    }
+    
+    function updateWritingTip() {
+      const tips = {
+        '晒过程': '晒过程的核心是「真实」。用第一视角记录，让观众有代入感，仿佛自己也在经历。',
+        '教知识': '教知识的核心是「实用」。给出具体可操作的方法，最好有数据支撑，让观众学完就能用。',
+        '讲故事': '讲故事的核心是「共情」。先描述困境让观众代入，再通过转折展示可能性，最后给出可执行的建议。',
+        '聊观点': '聊观点的核心是「争议」。抛出一个不那么主流的观点，用逻辑说服，但不要攻击任何人。'
+      };
+      document.getElementById('writing-tip').textContent = tips[selectedScriptType] || tips['讲故事'];
+    }
+    
+    function updateWordCount() {
+      const content = document.getElementById('script-content').value;
+      const count = content.replace(/\s/g, '').length;
+      document.getElementById('word-count').textContent = `${count} 字`;
+      
+      updateChecklist(content, count);
+    }
+    
+    function updateChecklist(content, wordCount) {
+      const checkHook = document.getElementById('check-hook');
+      const checkPain = document.getElementById('check-pain');
+      const checkCta = document.getElementById('check-cta');
+      const checkLength = document.getElementById('check-length');
+      
+      const hasHook = content.includes('【开头') || content.length > 50;
+      const hasPain = content.includes('困境') || content.includes('痛点') || content.includes('焦虑') || content.includes('问题');
+      const hasCta = content.includes('关注') || content.includes('评论') || content.includes('私信');
+      const goodLength = wordCount >= 200 && wordCount <= 500;
+      
+      updateCheckItem(checkHook, hasHook);
+      updateCheckItem(checkPain, hasPain);
+      updateCheckItem(checkCta, hasCta);
+      updateCheckItem(checkLength, goodLength);
+    }
+    
+    function updateCheckItem(el, checked) {
+      if (checked) {
+        el.classList.add('checked');
+        el.querySelector('svg').innerHTML = '<polyline points="20 6 9 17 4 12"/>';
+      } else {
+        el.classList.remove('checked');
+        el.querySelector('svg').innerHTML = '<circle cx="12" cy="12" r="10"/>';
+      }
+    }
+    
+    function generateScript() {
+      const template = scriptTemplates[selectedScriptType] || scriptTemplates['讲故事'];
+      document.getElementById('script-content').value = template;
+      updateWordCount();
+    }
+    
+    function saveToQueue() {
+      const content = document.getElementById('script-content').value;
+      if (!content) {
+        alert('请先生成或编写脚本');
+        return;
+      }
+      
+      const queue = JSON.parse(localStorage.getItem('creatorOS_publishQueue') || '[]');
+      queue.push({
+        id: Date.now(),
+        topic: selectedTopic?.title || '未命名选题',
+        scriptType: selectedScriptType,
+        content: content,
+        createdAt: new Date().toISOString(),
+        status: 'draft'
+      });
+      localStorage.setItem('creatorOS_publishQueue', JSON.stringify(queue));
+      
+      alert('已添加到发布队列！');
+      window.location.href = 'publish-center.html';
+    }
+    
+    loadSelectedTopic();
+    updateStructure();
+  </script>
+</body>
+</html>

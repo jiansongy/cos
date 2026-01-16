@@ -1,0 +1,792 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="CreatorOS - 素材库管理">
+  <title>素材库 - CreatorOS</title>
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%23FF2D55'/%3E%3Ctext x='16' y='21' font-family='system-ui' font-size='12' font-weight='bold' fill='white' text-anchor='middle'%3ECO%3C/text%3E%3C/svg%3E">
+  <link rel="stylesheet" href="assets/css/styles.css">
+  <style>
+    .material-page { background: var(--bg-dark); }
+    
+    .section-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-2xl);
+      padding: var(--space-8);
+      margin-bottom: var(--space-8);
+    }
+    
+    .section-card-title {
+      font-size: var(--text-xl);
+      font-weight: 600;
+      margin-bottom: var(--space-2);
+      display: flex;
+      align-items: center;
+      gap: var(--space-3);
+    }
+    
+    .section-card-title svg {
+      width: 24px;
+      height: 24px;
+      stroke: var(--color-secondary);
+    }
+    
+    .section-card-desc {
+      color: var(--text-secondary);
+      font-size: var(--text-sm);
+      margin-bottom: var(--space-6);
+    }
+    
+    .category-tabs {
+      display: flex;
+      gap: var(--space-2);
+      margin-bottom: var(--space-6);
+      overflow-x: auto;
+      padding-bottom: var(--space-2);
+    }
+    
+    .category-tab {
+      padding: var(--space-3) var(--space-5);
+      background: var(--bg-surface);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-full);
+      font-size: var(--text-sm);
+      font-weight: 500;
+      color: var(--text-secondary);
+      cursor: pointer;
+      transition: all var(--transition-base);
+      white-space: nowrap;
+    }
+    
+    .category-tab:hover {
+      border-color: var(--color-secondary);
+      color: var(--text-primary);
+    }
+    
+    .category-tab.active {
+      background: var(--color-secondary);
+      border-color: var(--color-secondary);
+      color: white;
+    }
+    
+    .material-list {
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-3);
+    }
+    
+    .material-item {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-lg);
+      padding: var(--space-4);
+      display: flex;
+      align-items: center;
+      gap: var(--space-4);
+      transition: all var(--transition-base);
+    }
+    
+    .material-item:hover {
+      border-color: var(--color-secondary);
+    }
+    
+    .material-icon {
+      width: 40px;
+      height: 40px;
+      background: rgba(0, 212, 170, 0.1);
+      border-radius: var(--radius-md);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+    
+    .material-icon svg {
+      width: 20px;
+      height: 20px;
+      stroke: var(--color-secondary);
+    }
+    
+    .material-content {
+      flex: 1;
+      min-width: 0;
+    }
+    
+    .material-title {
+      font-weight: 500;
+      margin-bottom: var(--space-1);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    
+    .material-meta {
+      font-size: var(--text-xs);
+      color: var(--text-muted);
+    }
+    
+    .material-actions {
+      display: flex;
+      gap: var(--space-2);
+    }
+    
+    .material-btn {
+      width: 32px;
+      height: 32px;
+      border-radius: var(--radius-md);
+      border: none;
+      background: var(--bg-elevated);
+      color: var(--text-secondary);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all var(--transition-base);
+    }
+    
+    .material-btn:hover {
+      background: var(--color-secondary);
+      color: white;
+    }
+    
+    .material-btn svg {
+      width: 16px;
+      height: 16px;
+    }
+    
+    .add-material-form {
+      background: var(--bg-surface);
+      border-radius: var(--radius-xl);
+      padding: var(--space-6);
+      margin-bottom: var(--space-6);
+    }
+    
+    .form-row {
+      display: grid;
+      gap: var(--space-4);
+      margin-bottom: var(--space-4);
+    }
+    
+    @media (min-width: 640px) {
+      .form-row { grid-template-columns: 1fr 2fr; }
+    }
+    
+    .form-input, .form-select, .form-textarea {
+      width: 100%;
+      padding: var(--space-3) var(--space-4);
+      background: var(--bg-elevated);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-lg);
+      color: var(--text-primary);
+      font-size: var(--text-sm);
+    }
+    
+    .form-input:focus, .form-select:focus, .form-textarea:focus {
+      outline: none;
+      border-color: var(--color-secondary);
+    }
+    
+    .form-textarea {
+      min-height: 100px;
+      resize: vertical;
+    }
+    
+    .form-label {
+      font-size: var(--text-sm);
+      color: var(--text-secondary);
+      margin-bottom: var(--space-2);
+      display: block;
+    }
+    
+    .structure-tree {
+      background: var(--bg-surface);
+      border-radius: var(--radius-xl);
+      padding: var(--space-6);
+      font-family: var(--font-mono);
+      font-size: var(--text-sm);
+      line-height: 2;
+    }
+    
+    .tree-folder {
+      color: var(--color-secondary);
+    }
+    
+    .tree-subfolder {
+      color: var(--color-warning);
+      margin-left: var(--space-6);
+    }
+    
+    .tree-file {
+      color: var(--text-muted);
+      margin-left: var(--space-12);
+    }
+    
+    .channel-grid {
+      display: grid;
+      gap: var(--space-4);
+    }
+    
+    @media (min-width: 640px) {
+      .channel-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+    
+    @media (min-width: 1024px) {
+      .channel-grid { grid-template-columns: repeat(4, 1fr); }
+    }
+    
+    .channel-card {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-xl);
+      padding: var(--space-5);
+      text-align: center;
+      transition: all var(--transition-base);
+    }
+    
+    .channel-card:hover {
+      border-color: var(--color-secondary);
+      transform: translateY(-2px);
+    }
+    
+    .channel-icon {
+      font-size: var(--text-3xl);
+      margin-bottom: var(--space-3);
+    }
+    
+    .channel-name {
+      font-weight: 600;
+      margin-bottom: var(--space-2);
+    }
+    
+    .channel-desc {
+      font-size: var(--text-xs);
+      color: var(--text-muted);
+    }
+    
+    .standard-grid {
+      display: grid;
+      gap: var(--space-4);
+    }
+    
+    @media (min-width: 768px) {
+      .standard-grid { grid-template-columns: repeat(3, 1fr); }
+    }
+    
+    .standard-card {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-xl);
+      padding: var(--space-5);
+    }
+    
+    .standard-title {
+      font-weight: 600;
+      margin-bottom: var(--space-2);
+      display: flex;
+      align-items: center;
+      gap: var(--space-2);
+    }
+    
+    .standard-title svg {
+      width: 18px;
+      height: 18px;
+      stroke: var(--color-secondary);
+    }
+    
+    .standard-desc {
+      font-size: var(--text-sm);
+      color: var(--text-secondary);
+    }
+    
+    .dimension-grid {
+      display: grid;
+      gap: var(--space-3);
+      grid-template-columns: repeat(2, 1fr);
+    }
+    
+    @media (min-width: 768px) {
+      .dimension-grid { grid-template-columns: repeat(5, 1fr); }
+    }
+    
+    .dimension-card {
+      background: var(--bg-elevated);
+      border-radius: var(--radius-lg);
+      padding: var(--space-4);
+      text-align: center;
+    }
+    
+    .dimension-title {
+      font-size: var(--text-sm);
+      font-weight: 500;
+      margin-bottom: var(--space-2);
+    }
+    
+    .dimension-options {
+      font-size: var(--text-xs);
+      color: var(--text-muted);
+      line-height: 1.6;
+    }
+    
+    .empty-state {
+      text-align: center;
+      padding: var(--space-12);
+      color: var(--text-muted);
+    }
+    
+    .empty-state svg {
+      width: 64px;
+      height: 64px;
+      stroke: var(--text-muted);
+      margin-bottom: var(--space-4);
+    }
+  </style>
+</head>
+<body class="material-page">
+  <header class="site-header">
+    <div class="container">
+      <div class="site-header-inner">
+        <a href="index.html" class="logo">
+          <span class="logo-mark">CO</span>
+          <span class="logo-text">CreatorOS</span>
+        </a>
+        <nav class="desktop-nav">
+          <a href="index.html" class="nav-link">仪表盘</a>
+          <a href="setup-wizard.html" class="nav-link">设置</a>
+          <a href="topic-engine.html" class="nav-link">选题</a>
+          <a href="script-generator.html" class="nav-link">脚本</a>
+          <a href="material-library.html" class="nav-link active">素材</a>
+          <a href="publish-center.html" class="nav-link">发布</a>
+        </nav>
+        <button class="mobile-menu-btn" aria-label="Toggle menu">
+          <span class="hamburger-line"></span>
+          <span class="hamburger-line"></span>
+          <span class="hamburger-line"></span>
+        </button>
+      </div>
+    </div>
+  </header>
+  
+  <nav class="mobile-nav">
+    <a href="index.html" class="mobile-nav-link">仪表盘</a>
+    <a href="setup-wizard.html" class="mobile-nav-link">设置</a>
+    <a href="topic-engine.html" class="mobile-nav-link">选题</a>
+    <a href="script-generator.html" class="mobile-nav-link">脚本</a>
+    <a href="material-library.html" class="mobile-nav-link active">素材</a>
+    <a href="publish-center.html" class="mobile-nav-link">发布</a>
+  </nav>
+
+  <main class="main-content">
+    <div class="container">
+      <header class="page-header" data-animate="fade-in-up">
+        <span class="page-eyebrow">素材管理</span>
+        <h1 class="page-title">素材库</h1>
+        <p class="page-subtitle">四级分类体系管理素材，AI自动归档优质选题</p>
+      </header>
+      
+      <section class="section-card" data-animate="fade-in-up" id="ai-archive-section">
+        <h2 class="section-card-title">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+          </svg>
+          AI自动归档
+        </h2>
+        <p class="section-card-desc">选题引擎中评分80+的优质选题会自动归档到这里</p>
+        
+        <div class="archived-topics" id="archived-topics">
+          <div class="empty-state" id="no-archived">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+            </svg>
+            <p>暂无归档选题</p>
+            <p class="text-sm">在选题引擎中点击"归档"按钮保存优质选题</p>
+            <a href="topic-engine.html" class="btn btn-secondary btn-sm mt-4">去选题引擎</a>
+          </div>
+          <div class="material-list" id="archived-list" style="display: none;"></div>
+        </div>
+      </section>
+      
+      <section class="section-card" data-animate="fade-in-up">
+        <h2 class="section-card-title">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/>
+          </svg>
+          四级分类结构
+        </h2>
+        <p class="section-card-desc">所有爆款内容都是已知元素的重新排列组合</p>
+        
+        <div class="structure-tree">
+          <div class="tree-folder">素材库/</div>
+          <div class="tree-subfolder">├── 1.选题库/</div>
+          <div class="tree-file">│ ├── 晒过程选题/</div>
+          <div class="tree-file">│ ├── 教知识选题/</div>
+          <div class="tree-file">│ ├── 讲故事选题/</div>
+          <div class="tree-file">│ └── 聊观点选题/</div>
+          <div class="tree-subfolder">├── 2.开篇金句/</div>
+          <div class="tree-file">│ ├── 痛点提问/</div>
+          <div class="tree-file">│ ├── 争议观点/</div>
+          <div class="tree-file">│ └── 数据事实/</div>
+          <div class="tree-subfolder">├── 3.文案结构/</div>
+          <div class="tree-file">│ ├── 困境转机/</div>
+          <div class="tree-file">│ ├── 对比反差/</div>
+          <div class="tree-file">│ └── 递进升华/</div>
+          <div class="tree-subfolder">└── 4.呈现形式/</div>
+          <div class="tree-file">  ├── 场景参考/</div>
+          <div class="tree-file">  ├── 运镜手法/</div>
+          <div class="tree-file">  └── 剪辑风格/</div>
+        </div>
+      </section>
+      
+      <section class="section-card" data-animate="fade-in-up">
+        <h2 class="section-card-title">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="10"/>
+            <line x1="12" y1="8" x2="12" y2="16"/>
+            <line x1="8" y1="12" x2="16" y2="12"/>
+          </svg>
+          添加素材
+        </h2>
+        <p class="section-card-desc">快速收集你发现的优质素材</p>
+        
+        <div class="add-material-form">
+          <div class="form-row">
+            <div>
+              <label class="form-label">分类</label>
+              <select class="form-select" id="material-category">
+                <option value="topic">选题库</option>
+                <option value="opening">开篇金句</option>
+                <option value="structure">文案结构</option>
+                <option value="presentation">呈现形式</option>
+              </select>
+            </div>
+            <div>
+              <label class="form-label">标题</label>
+              <input type="text" class="form-input" id="material-title" placeholder="简短描述这个素材">
+            </div>
+          </div>
+          <div>
+            <label class="form-label">内容/备注</label>
+            <textarea class="form-textarea" id="material-content" placeholder="详细内容或来源链接"></textarea>
+          </div>
+          <button class="btn btn-primary mt-4" onclick="addMaterial()">添加素材</button>
+        </div>
+        
+        <div class="category-tabs">
+          <button class="category-tab active" onclick="switchTab(this, 'topic')">选题库</button>
+          <button class="category-tab" onclick="switchTab(this, 'opening')">开篇金句</button>
+          <button class="category-tab" onclick="switchTab(this, 'structure')">文案结构</button>
+          <button class="category-tab" onclick="switchTab(this, 'presentation')">呈现形式</button>
+        </div>
+        
+        <div class="material-list" id="material-list">
+          <div class="material-item">
+            <div class="material-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                <polyline points="14 2 14 8 20 8"/>
+              </svg>
+            </div>
+            <div class="material-content">
+              <div class="material-title">100块在上海吃一周挑战</div>
+              <div class="material-meta">选题库 · 成本元素 · 2天前</div>
+            </div>
+            <div class="material-actions">
+              <button class="material-btn" title="编辑">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+              </button>
+              <button class="material-btn" title="删除">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+              </button>
+            </div>
+          </div>
+          <div class="material-item">
+            <div class="material-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                <polyline points="14 2 14 8 20 8"/>
+              </svg>
+            </div>
+            <div class="material-content">
+              <div class="material-title">宝妈产后三个月瘦身秘籍</div>
+              <div class="material-meta">选题库 · 人群元素 · 3天前</div>
+            </div>
+            <div class="material-actions">
+              <button class="material-btn" title="编辑">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+              </button>
+              <button class="material-btn" title="删除">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+              </button>
+            </div>
+          </div>
+          <div class="material-item">
+            <div class="material-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                <polyline points="14 2 14 8 20 8"/>
+              </svg>
+            </div>
+            <div class="material-content">
+              <div class="material-title">带奶奶做美甲系列</div>
+              <div class="material-meta">选题库 · 反差元素 · 5天前</div>
+            </div>
+            <div class="material-actions">
+              <button class="material-btn" title="编辑">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+              </button>
+              <button class="material-btn" title="删除">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+              </button>
+            </div>
+          </div>
+        </div>
+      </section>
+      
+      <section class="section-card" data-animate="fade-in-up">
+        <h2 class="section-card-title">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="11" cy="11" r="8"/>
+            <line x1="21" y1="21" x2="16.65" y2="16.65"/>
+          </svg>
+          素材采集渠道
+        </h2>
+        <p class="section-card-desc">从这些渠道挖掘优质素材</p>
+        
+        <div class="channel-grid">
+          <div class="channel-card">
+            <div class="channel-icon">🎵</div>
+            <div class="channel-name">抖音搜索</div>
+            <p class="channel-desc">行业关键词 + 半年内 + 最多点赞</p>
+          </div>
+          <div class="channel-card">
+            <div class="channel-icon">🔥</div>
+            <div class="channel-name">热点宝</div>
+            <p class="channel-desc">追踪同行、系统推荐、粉丝画像</p>
+          </div>
+          <div class="channel-card">
+            <div class="channel-icon">💬</div>
+            <div class="channel-name">评论区</div>
+            <p class="channel-desc">同行评论区未回复的真实需求</p>
+          </div>
+          <div class="channel-card">
+            <div class="channel-icon">📕</div>
+            <div class="channel-name">小红书</div>
+            <p class="channel-desc">封面标题策略、关键词前置</p>
+          </div>
+        </div>
+      </section>
+      
+      <section class="section-card" data-animate="fade-in-up">
+        <h2 class="section-card-title">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
+            <polyline points="22 4 12 14.01 9 11.01"/>
+          </svg>
+          选题筛选三标准
+        </h2>
+        <p class="section-card-desc">确保收集的素材有效可用</p>
+        
+        <div class="standard-grid">
+          <div class="standard-card">
+            <div class="standard-title">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+              客观性
+            </div>
+            <p class="standard-desc">避免参考超级大号，关注3-5千粉但有30-60万点赞的爆款</p>
+          </div>
+          <div class="standard-card">
+            <div class="standard-title">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+              有效性
+            </div>
+            <p class="standard-desc">只看一年内的爆款，超时信息差失效</p>
+          </div>
+          <div class="standard-card">
+            <div class="standard-title">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+              可用性
+            </div>
+            <p class="standard-desc">确保自己能复现，匹配执行能力</p>
+          </div>
+        </div>
+      </section>
+      
+      <section class="section-card" data-animate="fade-in-up">
+        <h2 class="section-card-title">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
+            <circle cx="8.5" cy="8.5" r="1.5"/>
+            <polyline points="21 15 16 10 5 21"/>
+          </svg>
+          呈现形式创新五维度
+        </h2>
+        <p class="section-card-desc">只需更换任意2个维度就能创造全新呈现形式</p>
+        
+        <div class="dimension-grid">
+          <div class="dimension-card">
+            <div class="dimension-title">拍摄角度</div>
+            <p class="dimension-options">俯拍/仰拍/平拍/怼脸/远景</p>
+          </div>
+          <div class="dimension-card">
+            <div class="dimension-title">出镜人物</div>
+            <p class="dimension-options">单人/双人/多人</p>
+          </div>
+          <div class="dimension-card">
+            <div class="dimension-title">出场方式</div>
+            <p class="dimension-options">站姿/奔跑/爬行/咆哮</p>
+          </div>
+          <div class="dimension-card">
+            <div class="dimension-title">使用道具</div>
+            <p class="dimension-options">水杯/耳环/发箍/帽子</p>
+          </div>
+          <div class="dimension-card">
+            <div class="dimension-title">剪辑方式</div>
+            <p class="dimension-options">调色/字幕/转场</p>
+          </div>
+        </div>
+      </section>
+      
+      <div class="text-center mt-8" data-animate="fade-in-up">
+        <a href="publish-center.html" class="btn btn-primary">下一步：发布中心 →</a>
+      </div>
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container">
+      <div class="footer-content">
+        <a href="index.html" class="logo">
+          <span class="logo-mark">CO</span>
+          <span class="logo-text">CreatorOS</span>
+        </a>
+        <nav class="footer-nav">
+          <a href="setup-wizard.html" class="footer-link">设置</a>
+          <a href="topic-engine.html" class="footer-link">选题</a>
+          <a href="script-generator.html" class="footer-link">脚本</a>
+          <a href="material-library.html" class="footer-link">素材</a>
+          <a href="publish-center.html" class="footer-link">发布</a>
+        </nav>
+      </div>
+    </div>
+  </footer>
+
+  <script src="assets/js/main.js"></script>
+  <script>
+    function switchTab(el, category) {
+      document.querySelectorAll('.category-tab').forEach(tab => tab.classList.remove('active'));
+      el.classList.add('active');
+    }
+    
+    function addMaterial() {
+      const category = document.getElementById('material-category').value;
+      const title = document.getElementById('material-title').value;
+      const content = document.getElementById('material-content').value;
+      
+      if (!title) {
+        alert('请输入素材标题');
+        return;
+      }
+      
+      const categoryNames = {
+        topic: '选题库',
+        opening: '开篇金句',
+        structure: '文案结构',
+        presentation: '呈现形式'
+      };
+      
+      const list = document.getElementById('material-list');
+      const item = document.createElement('div');
+      item.className = 'material-item';
+      item.innerHTML = `
+        <div class="material-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+            <polyline points="14 2 14 8 20 8"/>
+          </svg>
+        </div>
+        <div class="material-content">
+          <div class="material-title">${title}</div>
+          <div class="material-meta">${categoryNames[category]} · 刚刚</div>
+        </div>
+        <div class="material-actions">
+          <button class="material-btn" title="删除" onclick="this.closest('.material-item').remove()">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+          </button>
+        </div>
+      `;
+      list.insertBefore(item, list.firstChild);
+      
+      document.getElementById('material-title').value = '';
+      document.getElementById('material-content').value = '';
+    }
+    
+    function loadArchivedTopics() {
+      const archived = JSON.parse(localStorage.getItem('creatorOS_archivedTopics') || '[]');
+      
+      if (archived.length === 0) {
+        document.getElementById('no-archived').style.display = 'block';
+        document.getElementById('archived-list').style.display = 'none';
+        return;
+      }
+      
+      document.getElementById('no-archived').style.display = 'none';
+      document.getElementById('archived-list').style.display = 'flex';
+      
+      const list = document.getElementById('archived-list');
+      list.innerHTML = archived.map((topic, index) => `
+        <div class="material-item">
+          <div class="material-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+            </svg>
+          </div>
+          <div class="material-content">
+            <div class="material-title">${topic.title}</div>
+            <div class="material-meta">${topic.type || '选题'} · 评分 ${topic.score || 85} · ${formatDate(topic.archivedAt)}</div>
+          </div>
+          <div class="material-actions">
+            <button class="material-btn" title="使用" onclick="useTopic(${index})">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+            </button>
+            <button class="material-btn" title="删除" onclick="removeArchived(${index})">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+            </button>
+          </div>
+        </div>
+      `).join('');
+    }
+    
+    function formatDate(dateStr) {
+      if (!dateStr) return '未知';
+      const date = new Date(dateStr);
+      const now = new Date();
+      const diff = now - date;
+      const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+      if (days === 0) return '今天';
+      if (days === 1) return '昨天';
+      if (days < 7) return `${days}天前`;
+      return `${date.getMonth() + 1}/${date.getDate()}`;
+    }
+    
+    function useTopic(index) {
+      const archived = JSON.parse(localStorage.getItem('creatorOS_archivedTopics') || '[]');
+      const topic = archived[index];
+      if (topic) {
+        localStorage.setItem('creatorOS_selectedTopic', JSON.stringify(topic));
+        window.location.href = 'script-generator.html';
+      }
+    }
+    
+    function removeArchived(index) {
+      if (!confirm('确定要删除这个归档选题吗？')) return;
+      const archived = JSON.parse(localStorage.getItem('creatorOS_archivedTopics') || '[]');
+      archived.splice(index, 1);
+      localStorage.setItem('creatorOS_archivedTopics', JSON.stringify(archived));
+      loadArchivedTopics();
+    }
+    
+    loadArchivedTopics();
+  </script>
+</body>
+</html>
