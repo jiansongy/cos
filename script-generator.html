@@ -229,6 +229,126 @@
       line-height: 1.5;
     }
     
+    .hook-type-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: var(--space-2);
+      margin-bottom: var(--space-4);
+    }
+    
+    @media (min-width: 768px) {
+      .hook-type-grid {
+        grid-template-columns: repeat(4, 1fr);
+      }
+    }
+    
+    .hook-type-chip {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: var(--space-1);
+      padding: var(--space-3);
+      background: var(--bg-surface);
+      border: 2px solid var(--border-color);
+      border-radius: var(--radius-lg);
+      cursor: pointer;
+      transition: all var(--transition-base);
+      text-align: center;
+    }
+    
+    .hook-type-chip:hover {
+      border-color: var(--color-primary);
+    }
+    
+    .hook-type-chip.selected {
+      border-color: var(--color-primary);
+      background: rgba(255, 45, 85, 0.1);
+    }
+    
+    .hook-type-icon {
+      font-size: var(--text-xl);
+    }
+    
+    .hook-type-name {
+      font-weight: 600;
+      font-size: var(--text-xs);
+    }
+    
+    .hook-type-pattern {
+      font-size: var(--text-xs);
+      color: var(--text-muted);
+    }
+    
+    .hook-generated {
+      background: linear-gradient(135deg, rgba(255, 45, 85, 0.05), rgba(88, 86, 214, 0.05));
+      border: 1px solid rgba(255, 45, 85, 0.2);
+      border-radius: var(--radius-xl);
+      padding: var(--space-4);
+      margin-top: var(--space-4);
+    }
+    
+    .hook-generated-title {
+      font-size: var(--text-sm);
+      font-weight: 600;
+      color: var(--color-primary);
+      margin-bottom: var(--space-3);
+    }
+    
+    .hook-generated-list {
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-2);
+    }
+    
+    .argument-type-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: var(--space-2);
+    }
+    
+    @media (min-width: 768px) {
+      .argument-type-grid {
+        grid-template-columns: repeat(3, 1fr);
+      }
+    }
+    
+    .argument-type-chip {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: var(--space-1);
+      padding: var(--space-3);
+      background: var(--bg-surface);
+      border: 2px solid var(--border-color);
+      border-radius: var(--radius-lg);
+      cursor: pointer;
+      transition: all var(--transition-base);
+      text-align: center;
+    }
+    
+    .argument-type-chip:hover {
+      border-color: var(--color-accent);
+    }
+    
+    .argument-type-chip.selected {
+      border-color: var(--color-accent);
+      background: rgba(88, 86, 214, 0.1);
+    }
+    
+    .argument-type-icon {
+      font-size: var(--text-xl);
+    }
+    
+    .argument-type-name {
+      font-weight: 600;
+      font-size: var(--text-xs);
+    }
+    
+    .argument-type-desc {
+      font-size: var(--text-xs);
+      color: var(--text-muted);
+    }
+    
     .cta-options {
       display: flex;
       flex-wrap: wrap;
@@ -429,19 +549,101 @@
             </div>
             
             <div class="script-card" data-animate="fade-in-up">
-              <h2 class="script-card-title">🎣 选择开头钩子</h2>
-              <div class="hook-options" id="hook-options">
-                <div class="hook-option selected" data-hook="1" onclick="selectHook(this)">
-                  <div class="hook-radio"></div>
-                  <div class="hook-text">被裁后收入反而涨了？听我说完，你会发现这不是鸡汤。</div>
+              <h2 class="script-card-title">🎣 黄金3秒开头库</h2>
+              <p class="text-sm text-muted mb-4">选择开头类型，AI将根据选题生成多个钩子供你选择</p>
+              
+              <div class="hook-type-grid" id="hook-type-grid">
+                <div class="hook-type-chip selected" data-type="悬念式" onclick="selectHookType(this)">
+                  <span class="hook-type-icon">🔮</span>
+                  <span class="hook-type-name">悬念式</span>
+                  <span class="hook-type-pattern">"99%的人不知道..."</span>
                 </div>
-                <div class="hook-option" data-hook="2" onclick="selectHook(this)">
-                  <div class="hook-radio"></div>
-                  <div class="hook-text">大厂10年不如副业3个月，我不是在凡尔赛，我是在说真话。</div>
+                <div class="hook-type-chip" data-type="痛点式" onclick="selectHookType(this)">
+                  <span class="hook-type-icon">💢</span>
+                  <span class="hook-type-name">痛点式</span>
+                  <span class="hook-type-pattern">"你是不是也遇到过..."</span>
                 </div>
-                <div class="hook-option" data-hook="3" onclick="selectHook(this)">
-                  <div class="hook-radio"></div>
-                  <div class="hook-text">如果你也在35岁前后焦虑，这条视频可能会改变你的想法。</div>
+                <div class="hook-type-chip" data-type="反常识" onclick="selectHookType(this)">
+                  <span class="hook-type-icon">🔄</span>
+                  <span class="hook-type-name">反常识</span>
+                  <span class="hook-type-pattern">"XXX其实是错的"</span>
+                </div>
+                <div class="hook-type-chip" data-type="数字式" onclick="selectHookType(this)">
+                  <span class="hook-type-icon">🔢</span>
+                  <span class="hook-type-name">数字式</span>
+                  <span class="hook-type-pattern">"3个方法让你..."</span>
+                </div>
+                <div class="hook-type-chip" data-type="对比式" onclick="selectHookType(this)">
+                  <span class="hook-type-icon">⚖️</span>
+                  <span class="hook-type-name">对比式</span>
+                  <span class="hook-type-pattern">"以前...现在..."</span>
+                </div>
+                <div class="hook-type-chip" data-type="提问式" onclick="selectHookType(this)">
+                  <span class="hook-type-icon">❓</span>
+                  <span class="hook-type-name">提问式</span>
+                  <span class="hook-type-pattern">"如果你能...?"</span>
+                </div>
+                <div class="hook-type-chip" data-type="场景式" onclick="selectHookType(this)">
+                  <span class="hook-type-icon">🎬</span>
+                  <span class="hook-type-name">场景式</span>
+                  <span class="hook-type-pattern">"昨天我遇到..."</span>
+                </div>
+              </div>
+              
+              <div class="hook-generated" id="hook-generated">
+                <div class="hook-generated-title">✨ AI生成的开头钩子</div>
+                <div class="hook-options" id="hook-options">
+                  <div class="hook-option selected" data-hook="1" onclick="selectHook(this)">
+                    <div class="hook-radio"></div>
+                    <div class="hook-text">被裁后收入反而涨了？听我说完，你会发现这不是鸡汤。</div>
+                  </div>
+                  <div class="hook-option" data-hook="2" onclick="selectHook(this)">
+                    <div class="hook-radio"></div>
+                    <div class="hook-text">大厂10年不如副业3个月，我不是在凡尔赛，我是在说真话。</div>
+                  </div>
+                  <div class="hook-option" data-hook="3" onclick="selectHook(this)">
+                    <div class="hook-radio"></div>
+                    <div class="hook-text">如果你也在35岁前后焦虑，这条视频可能会改变你的想法。</div>
+                  </div>
+                </div>
+              </div>
+              <button class="btn btn-ghost mt-4" onclick="regenerateHooks()">🔄 重新生成钩子</button>
+            </div>
+            
+            <div class="script-card" data-animate="fade-in-up" id="argument-types-card" style="display: none;">
+              <h2 class="script-card-title">📊 选择论据类型（观点型专用）</h2>
+              <p class="text-sm text-muted mb-4">观点型脚本需要有力的论据支撑，选择1-2种论证方式</p>
+              
+              <div class="argument-type-grid" id="argument-type-grid">
+                <div class="argument-type-chip" data-type="权衡利弊" onclick="toggleArgumentType(this)">
+                  <span class="argument-type-icon">⚖️</span>
+                  <span class="argument-type-name">权衡利弊</span>
+                  <span class="argument-type-desc">分析优缺点</span>
+                </div>
+                <div class="argument-type-chip" data-type="举例说明" onclick="toggleArgumentType(this)">
+                  <span class="argument-type-icon">📌</span>
+                  <span class="argument-type-name">举例说明</span>
+                  <span class="argument-type-desc">具体案例支撑</span>
+                </div>
+                <div class="argument-type-chip" data-type="引用权威" onclick="toggleArgumentType(this)">
+                  <span class="argument-type-icon">🎓</span>
+                  <span class="argument-type-name">引用权威</span>
+                  <span class="argument-type-desc">专家/数据背书</span>
+                </div>
+                <div class="argument-type-chip" data-type="类比论证" onclick="toggleArgumentType(this)">
+                  <span class="argument-type-icon">🔗</span>
+                  <span class="argument-type-name">类比论证</span>
+                  <span class="argument-type-desc">用熟悉事物解释</span>
+                </div>
+                <div class="argument-type-chip" data-type="反面论证" onclick="toggleArgumentType(this)">
+                  <span class="argument-type-icon">🚫</span>
+                  <span class="argument-type-name">反面论证</span>
+                  <span class="argument-type-desc">说明不这样做的后果</span>
+                </div>
+                <div class="argument-type-chip" data-type="亲身经历" onclick="toggleArgumentType(this)">
+                  <span class="argument-type-icon">👤</span>
+                  <span class="argument-type-name">亲身经历</span>
+                  <span class="argument-type-desc">用自己的故事说服</span>
                 </div>
               </div>
             </div>
@@ -577,8 +779,48 @@
   <script>
     let selectedTopic = null;
     let selectedScriptType = '讲故事';
+    let selectedHookType = '悬念式';
     let selectedHook = 1;
     let selectedCTA = '关注了解更多';
+    let selectedArgumentTypes = [];
+    
+    const hookTemplates = {
+      '悬念式': [
+        '99%的人不知道，{topic}其实有个隐藏技巧',
+        '很多人都在问{topic}，但真正懂的人不到1%',
+        '关于{topic}，我今天要说一个可能会改变你认知的真相'
+      ],
+      '痛点式': [
+        '你是不是也遇到过{pain}的困扰？',
+        '如果你正在为{pain}发愁，这条视频一定要看完',
+        '{pain}让你焦虑？其实解决方法比你想的简单'
+      ],
+      '反常识': [
+        '关于{topic}，你以为的可能都是错的',
+        '今天要说一个反直觉的观点：{topic}根本不重要',
+        '大多数人对{topic}的理解是完全错误的'
+      ],
+      '数字式': [
+        '3个方法帮你搞定{topic}',
+        '做到这5点，{topic}再也不是问题',
+        '我用了3个月验证了{topic}的真相'
+      ],
+      '对比式': [
+        '以前我{before}，现在我{after}',
+        '同样是{topic}，为什么结果差这么多？',
+        '从{before}到{after}，我只做了一件事'
+      ],
+      '提问式': [
+        '如果你能{benefit}，你愿意花10分钟学习吗？',
+        '想知道{topic}的秘密吗？',
+        '{topic}真的那么难吗？'
+      ],
+      '场景式': [
+        '昨天我遇到一个粉丝问我{question}',
+        '上周发生了一件事，让我彻底改变了对{topic}的看法',
+        '刚才刷到一条留言，让我决定必须录这条视频'
+      ]
+    };
     
     const scriptStructures = {
       '晒过程': ['场景展示', '过程记录', '结果呈现', '引导互动'],
@@ -703,6 +945,67 @@
       selectedScriptType = el.dataset.type;
       updateStructure();
       updateWritingTip();
+      
+      const argumentCard = document.getElementById('argument-types-card');
+      if (selectedScriptType === '聊观点') {
+        argumentCard.style.display = 'block';
+      } else {
+        argumentCard.style.display = 'none';
+      }
+      
+      regenerateHooks();
+    }
+    
+    function selectHookType(el) {
+      document.querySelectorAll('.hook-type-chip').forEach(c => c.classList.remove('selected'));
+      el.classList.add('selected');
+      selectedHookType = el.dataset.type;
+      regenerateHooks();
+    }
+    
+    function regenerateHooks() {
+      const templates = hookTemplates[selectedHookType] || hookTemplates['悬念式'];
+      const topicTitle = selectedTopic?.title || '副业赚钱';
+      
+      const hooks = templates.map((template, index) => {
+        let hook = template
+          .replace('{topic}', topicTitle.substring(0, 10))
+          .replace('{pain}', '时间不够用')
+          .replace('{before}', '每天工作12小时')
+          .replace('{after}', '每天只工作4小时')
+          .replace('{benefit}', '月入过万')
+          .replace('{question}', topicTitle);
+        return { id: index + 1, text: hook };
+      });
+      
+      const hookOptions = document.getElementById('hook-options');
+      hookOptions.innerHTML = hooks.map((hook, index) => `
+        <div class="hook-option ${index === 0 ? 'selected' : ''}" data-hook="${hook.id}" onclick="selectHook(this)">
+          <div class="hook-radio"></div>
+          <div class="hook-text">${hook.text}</div>
+        </div>
+      `).join('');
+      
+      selectedHook = 1;
+    }
+    
+    function toggleArgumentType(el) {
+      const type = el.dataset.type;
+      
+      if (el.classList.contains('selected')) {
+        el.classList.remove('selected');
+        selectedArgumentTypes = selectedArgumentTypes.filter(t => t !== type);
+      } else {
+        if (selectedArgumentTypes.length >= 2) {
+          const firstSelected = document.querySelector('.argument-type-chip.selected');
+          if (firstSelected) {
+            firstSelected.classList.remove('selected');
+            selectedArgumentTypes.shift();
+          }
+        }
+        el.classList.add('selected');
+        selectedArgumentTypes.push(type);
+      }
     }
     
     function selectHook(el) {

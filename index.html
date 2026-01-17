@@ -311,6 +311,112 @@
       font-weight: 500;
       color: var(--color-primary);
     }
+    
+    .content-ratio-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-xl);
+      padding: var(--space-5);
+      margin-bottom: var(--space-4);
+    }
+    
+    .ratio-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: var(--space-4);
+    }
+    
+    .ratio-title {
+      font-size: var(--text-sm);
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: var(--space-2);
+    }
+    
+    .ratio-bar-container {
+      height: 24px;
+      background: var(--bg-elevated);
+      border-radius: var(--radius-full);
+      overflow: hidden;
+      display: flex;
+      margin-bottom: var(--space-3);
+    }
+    
+    .ratio-bar-main {
+      background: linear-gradient(135deg, var(--color-primary), var(--color-accent));
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-size: var(--text-xs);
+      font-weight: 600;
+      transition: width 0.5s ease;
+    }
+    
+    .ratio-bar-aux {
+      background: rgba(0, 212, 170, 0.3);
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--color-secondary);
+      font-size: var(--text-xs);
+      font-weight: 600;
+      transition: width 0.5s ease;
+    }
+    
+    .ratio-legend {
+      display: flex;
+      justify-content: space-between;
+      font-size: var(--text-xs);
+      color: var(--text-muted);
+    }
+    
+    .ratio-legend-item {
+      display: flex;
+      align-items: center;
+      gap: var(--space-2);
+    }
+    
+    .ratio-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+    }
+    
+    .ratio-dot.main {
+      background: var(--color-primary);
+    }
+    
+    .ratio-dot.aux {
+      background: var(--color-secondary);
+    }
+    
+    .ratio-status {
+      margin-top: var(--space-3);
+      padding: var(--space-2) var(--space-3);
+      border-radius: var(--radius-lg);
+      font-size: var(--text-xs);
+      text-align: center;
+    }
+    
+    .ratio-status.good {
+      background: rgba(0, 212, 170, 0.1);
+      color: var(--color-secondary);
+    }
+    
+    .ratio-status.warning {
+      background: rgba(255, 149, 0, 0.1);
+      color: var(--color-warning);
+    }
+    
+    .ratio-status.bad {
+      background: rgba(255, 59, 48, 0.1);
+      color: var(--color-danger);
+    }
   </style>
 </head>
 <body>
@@ -499,6 +605,30 @@
               </div>
             </div>
             
+            <div class="content-ratio-card" data-animate="fade-in-up">
+              <div class="ratio-header">
+                <div class="ratio-title">📊 内容配比追踪</div>
+                <span class="text-xs text-muted">本周数据</span>
+              </div>
+              <div class="ratio-bar-container">
+                <div class="ratio-bar-main" id="ratio-bar-main" style="width: 75%">75%</div>
+                <div class="ratio-bar-aux" id="ratio-bar-aux" style="width: 25%">25%</div>
+              </div>
+              <div class="ratio-legend">
+                <div class="ratio-legend-item">
+                  <span class="ratio-dot main"></span>
+                  <span>主赛道内容 <strong id="main-count">6</strong>条</span>
+                </div>
+                <div class="ratio-legend-item">
+                  <span class="ratio-dot aux"></span>
+                  <span>辅助内容 <strong id="aux-count">2</strong>条</span>
+                </div>
+              </div>
+              <div class="ratio-status good" id="ratio-status">
+                ✓ 配比健康！建议保持 80% 主赛道 + 20% 辅助内容
+              </div>
+            </div>
+            
             <!-- Trending -->
             <div class="dashboard-card" data-animate="fade-in-up">
               <div class="dashboard-card-header">
@@ -533,262 +663,105 @@
     </div>
   </main>
 
-  <!-- Cookbook Section - 为新手重新设计的入门指南 -->
   <section class="cookbook-section" id="cookbook">
     <div class="container">
       
-      <!-- HOOK: 情感入口 -->
       <header class="cookbook-header" data-animate="fade-in-up">
-        <div class="hook-question">每天花3小时做内容，值得吗？</div>
+        <div class="hook-question">🎯 3分钟上手指南</div>
         <p class="hook-subtext">
-          你很努力。选题想破头，脚本写到凌晨，剪辑调了无数遍。<br>
-          但粉丝涨得慢，变现更难。<strong>问题不在你，在方法。</strong>
+          不用看说明书，跟着这3步马上开始
         </p>
       </header>
 
-      <!-- PROBLEM: 验证痛点 -->
-      <div class="cookbook-card story-card" data-animate="fade-in-up">
-        <h3 class="cookbook-card-title">
-          <span class="cookbook-icon">😓</span>
-          为什么越努力，增长越慢？
-        </h3>
-        <div class="story-content">
-          <p>大多数创作者的一天是这样的：</p>
-          <div class="pain-list">
-            <div class="pain-item">
-              <span class="pain-icon">🤯</span>
-              <div class="pain-text">
-                <strong>选题焦虑</strong>
-                <span>每天醒来第一件事：今天发什么？刷半小时热搜，还是没头绪。</span>
-              </div>
-            </div>
-            <div class="pain-item">
-              <span class="pain-icon">⏰</span>
-              <div class="pain-text">
-                <strong>时间黑洞</strong>
-                <span>写个脚本2小时，录制1小时，剪辑又1小时。一天就这么没了。</span>
-              </div>
-            </div>
-            <div class="pain-item">
-              <span class="pain-icon">🎲</span>
-              <div class="pain-text">
-                <strong>靠运气出爆款</strong>
-                <span>发了100条，火了2条。但你不知道为什么火，下次还是碰运气。</span>
-              </div>
-            </div>
-            <div class="pain-item">
-              <span class="pain-icon">😴</span>
-              <div class="pain-text">
-                <strong>越做越累</strong>
-                <span>别人日更轻松，你日更痛苦。差距在哪？</span>
-              </div>
+      <div class="cookbook-card" data-animate="fade-in-up" style="background: linear-gradient(135deg, rgba(0, 212, 170, 0.1), rgba(88, 86, 214, 0.1)); border-color: rgba(0, 212, 170, 0.3);">
+        <div class="quick-start-steps">
+          <div class="quick-step">
+            <div class="quick-step-number">1</div>
+            <div class="quick-step-content">
+              <h4>点击「开始设置」</h4>
+              <p>告诉系统你想做什么内容、吸引什么人</p>
+              <span class="quick-step-time">⏱️ 约5分钟</span>
             </div>
           </div>
-          <p class="insight-line">这不是你不够努力。是<strong>「手工作坊」式的创作，根本拼不过「流水线」</strong>。</p>
+          <div class="quick-step">
+            <div class="quick-step-number">2</div>
+            <div class="quick-step-content">
+              <h4>进入「选题引擎」</h4>
+              <p>点击生成选题，AI会给你推荐5-10个带评分的选题</p>
+              <span class="quick-step-time">⏱️ 约1分钟</span>
+            </div>
+          </div>
+          <div class="quick-step">
+            <div class="quick-step-number">3</div>
+            <div class="quick-step-content">
+              <h4>选一个，生成脚本</h4>
+              <p>选中喜欢的选题，一键生成完整脚本框架</p>
+              <span class="quick-step-time">⏱️ 约2分钟</span>
+            </div>
+          </div>
+        </div>
+        <div style="text-align: center; margin-top: var(--space-6);">
+          <a href="setup-wizard.html" class="btn btn-primary btn-large">👉 立即开始</a>
+          <p style="font-size: var(--text-sm); color: var(--text-muted); margin-top: var(--space-3);">完全免费，无需注册</p>
         </div>
       </div>
 
-      <!-- INSIGHT: 思维转变 -->
-      <div class="cookbook-card insight-card-full" data-animate="fade-in-up">
+      <div class="cookbook-card" data-animate="fade-in-up">
         <h3 class="cookbook-card-title">
-          <span class="cookbook-icon">💡</span>
-          我们发现了一个规律
+          <span class="cookbook-icon">✨</span>
+          核心功能一览
         </h3>
-        <div class="insight-content">
-          <div class="insight-block">
-            <div class="insight-stat">80%</div>
-            <div class="insight-desc">
-              <strong>内容创作中有80%是重复劳动</strong>
-              <p>找选题、写开头、想标题、调格式、发布到各平台……这些事情每天都在重复，但每次都要从零开始。</p>
-            </div>
+        <div class="feature-showcase">
+          <div class="feature-item">
+            <div class="feature-icon">🎯</div>
+            <h4>AI选题引擎</h4>
+            <p>不知道今天发什么？AI帮你从热点中筛选最适合你的选题，每个都有评分</p>
           </div>
-          <div class="insight-block">
-            <div class="insight-stat">20%</div>
-            <div class="insight-desc">
-              <strong>只有20%需要你的独特创意</strong>
-              <p>你的个人故事、独特见解、真实表达——这才是观众追着看的东西。但你把80%的时间花在了不需要创意的事上。</p>
-            </div>
+          <div class="feature-item">
+            <div class="feature-icon">🔥</div>
+            <h4>爆款元素增强</h4>
+            <p>普通选题秒变爆款！选择「成本的」「反差的」等8大元素，分数立涨20+</p>
           </div>
-          <div class="insight-conclusion">
-            <p>顶级创作者的秘密不是更努力，而是<strong>把重复的80%交给系统，自己只做那20%</strong>。</p>
+          <div class="feature-item">
+            <div class="feature-icon">📝</div>
+            <h4>脚本生成器</h4>
+            <p>4种万能框架：晒过程、教知识、讲故事、聊观点，选一个套进去就能用</p>
+          </div>
+          <div class="feature-item">
+            <div class="feature-icon">🎣</div>
+            <h4>黄金3秒开头库</h4>
+            <p>7种经典开头技巧：悬念式、痛点式、反常识...AI根据选题自动生成</p>
           </div>
         </div>
       </div>
 
-      <!-- SHIFT: 重新定义 -->
-      <div class="cookbook-card shift-card" data-animate="fade-in-up">
-        <h3 class="cookbook-card-title">
-          <span class="cookbook-icon">🔄</span>
-          如果创作变成一个系统
-        </h3>
-        <div class="shift-content">
-          <p class="shift-intro">想象一下：</p>
-          <div class="shift-comparison">
-            <div class="shift-before">
-              <div class="shift-label">现在的你</div>
-              <ul>
-                <li>每天醒来想选题</li>
-                <li>脚本从零开始写</li>
-                <li>凭感觉判断好不好</li>
-                <li>发完不知道为什么火</li>
-                <li>每天3小时，身心俱疲</li>
-              </ul>
-            </div>
-            <div class="shift-arrow">→</div>
-            <div class="shift-after">
-              <div class="shift-label">用系统的你</div>
-              <ul>
-                <li>AI根据你的定位推荐选题</li>
-                <li>脚本框架自动生成</li>
-                <li>选题评分告诉你值不值得做</li>
-                <li>数据分析告诉你什么在起作用</li>
-                <li>每天15分钟，专注录制</li>
-              </ul>
-            </div>
-          </div>
-          <p class="shift-note">
-            用系统不是偷懒，不是作弊。<br>
-            <strong>麦当劳的厨师不需要是大厨，因为系统保证出品稳定。</strong><br>
-            CreatorOS 就是让你的内容出品也能稳定的系统。
-          </p>
-        </div>
-      </div>
-
-      <!-- SOLUTION: 什么是 CreatorOS -->
-      <div class="cookbook-card solution-card" data-animate="fade-in-up">
-        <h3 class="cookbook-card-title">
-          <span class="cookbook-icon">🚀</span>
-          CreatorOS 是什么？
-        </h3>
-        <div class="solution-content">
-          <p class="solution-intro">
-            一句话：<strong>像手机有iOS，创作者也需要一个操作系统。</strong>
-          </p>
-          <p>CreatorOS 帮你管理选题、写作、发布的整个流程，让创作变得可预测、可复制、可持续。</p>
-          
-          <div class="solution-how">
-            <h4>它是怎么做到的？</h4>
-            <div class="how-steps">
-              <div class="how-step">
-                <div class="how-number">1</div>
-                <div class="how-content">
-                  <strong>先了解你</strong>
-                  <p>花5分钟告诉系统：你想吸引什么样的读者？你能提供什么价值？你的风格是什么？<br><em>（只需要设置一次，之后系统会记住）</em></p>
-                </div>
-              </div>
-              <div class="how-step">
-                <div class="how-number">2</div>
-                <div class="how-content">
-                  <strong>AI帮你找选题</strong>
-                  <p>每天自动生成5-10个选题建议，每个都经过评分——告诉你哪个最可能火、最适合变现。<br><em>（不是AI替你创作，是帮你省掉「想选题」的时间）</em></p>
-                </div>
-              </div>
-              <div class="how-step">
-                <div class="how-number">3</div>
-                <div class="how-content">
-                  <strong>脚本框架自动生成</strong>
-                  <p>选好选题，点一下，脚本框架就出来了。开头怎么抓人、中间怎么展开、结尾怎么引导——都有参考。<br><em>（你只需要填入自己的故事和案例）</em></p>
-                </div>
-              </div>
-              <div class="how-step">
-                <div class="how-number">4</div>
-                <div class="how-content">
-                  <strong>发布一键搞定</strong>
-                  <p>同一条内容，自动适配抖音、小红书、视频号的格式要求。不用再为每个平台单独调整。</p>
-                </div>
-              </div>
-              <div class="how-step">
-                <div class="how-number">5</div>
-                <div class="how-content">
-                  <strong>越用越聪明</strong>
-                  <p>系统会学习什么内容在你的账号上效果好，下次推荐的选题会越来越准。</p>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- WORKFLOW: 15分钟工作流 -->
-      <div class="cookbook-card workflow-card" data-animate="fade-in-up">
-        <h3 class="cookbook-card-title">
-          <span class="cookbook-icon">⏱️</span>
-          15分钟完成一天的内容准备
-        </h3>
-        <div class="workflow-simple">
-          <div class="workflow-phase-new">
-            <div class="phase-badge morning">早晨 · 10分钟</div>
-            <div class="phase-content-new">
-              <div class="phase-action">
-                <span class="action-number">①</span>
-                <span class="action-text">打开CreatorOS，看AI给你推荐的选题</span>
-              </div>
-              <div class="phase-action">
-                <span class="action-number">②</span>
-                <span class="action-text">选一个评分最高的，点击「生成脚本」</span>
-              </div>
-              <div class="phase-action">
-                <span class="action-number">③</span>
-                <span class="action-text">填入你的案例和故事，搞定</span>
-              </div>
-            </div>
-          </div>
-          <div class="workflow-phase-new">
-            <div class="phase-badge afternoon">录制 · 你的时间</div>
-            <div class="phase-content-new">
-              <div class="phase-action">
-                <span class="action-number">④</span>
-                <span class="action-text">照着脚本录制（这是你真正需要花时间的地方）</span>
-              </div>
-            </div>
-          </div>
-          <div class="workflow-phase-new">
-            <div class="phase-badge evening">发布 · 5分钟</div>
-            <div class="phase-content-new">
-              <div class="phase-action">
-                <span class="action-number">⑤</span>
-                <span class="action-text">回到发布中心，一键发送到各平台</span>
-              </div>
-              <div class="phase-action">
-                <span class="action-number">⑥</span>
-                <span class="action-text">晚上看数据，系统告诉你哪里做对了</span>
-              </div>
-            </div>
-          </div>
-        </div>
-        <p class="workflow-result">
-          <strong>结果：</strong>你不再为「今天发什么」焦虑，把时间花在真正需要你的地方——录制和表达。
-        </p>
-      </div>
-
-      <!-- SCRIPT TYPES: 四种脚本（保留，简化说明） -->
       <div class="cookbook-card" data-animate="fade-in-up">
         <h3 class="cookbook-card-title">
           <span class="cookbook-icon">📝</span>
           四种万能脚本框架
         </h3>
-        <p class="script-intro">不知道怎么写脚本？选一个框架套进去就行：</p>
+        <p class="script-intro">不会写脚本？选一个框架，填入你的内容就行：</p>
         <div class="script-types-grid">
           <div class="script-type">
-            <h4>晒过程</h4>
+            <h4>📸 晒过程</h4>
             <p class="script-use">展示你怎么做事的</p>
             <p class="script-example">「我是怎么一步步做到的」</p>
             <p class="script-struct">场景 → 过程 → 结果 → 引导</p>
           </div>
           <div class="script-type">
-            <h4>教知识</h4>
+            <h4>📚 教知识</h4>
             <p class="script-use">分享专业干货</p>
             <p class="script-example">「3个方法帮你解决XX问题」</p>
             <p class="script-struct">痛点 → 方法 → 案例 → 总结</p>
           </div>
           <div class="script-type">
-            <h4>讲故事</h4>
+            <h4>📖 讲故事</h4>
             <p class="script-use">让人记住你</p>
             <p class="script-example">「我曾经也是这样走过来的」</p>
             <p class="script-struct">困境 → 转折 → 启示 → 共鸣</p>
           </div>
           <div class="script-type">
-            <h4>聊观点</h4>
+            <h4>💬 聊观点</h4>
             <p class="script-use">表达态度，引发讨论</p>
             <p class="script-example">「我为什么不同意XX说法」</p>
             <p class="script-struct">观点 → 论据 → 反驳 → 升华</p>
@@ -796,139 +769,41 @@
         </div>
       </div>
 
-      <!-- CTA: 开始使用 -->
-      <div class="cookbook-card cta-card" data-animate="fade-in-up">
-        <div class="cta-content">
-          <h3>准备好把3小时压缩到15分钟了吗？</h3>
-          <p>点击上方「开始设置」，5分钟完成创作者档案，解锁AI选题功能。</p>
-          <a href="setup-wizard.html" class="btn btn-primary btn-large">开始设置（约5分钟）</a>
+      <div class="cookbook-card" data-animate="fade-in-up">
+        <h3 class="cookbook-card-title">
+          <span class="cookbook-icon">❓</span>
+          常见问题
+        </h3>
+        <div class="faq-list">
+          <div class="faq-item">
+            <h4>这是什么？</h4>
+            <p>CreatorOS 是一个帮你做短视频/自媒体内容的工具。它能帮你想选题、写脚本、管理发布，把每天3小时的工作压缩到15分钟。</p>
+          </div>
+          <div class="faq-item">
+            <h4>需要付费吗？</h4>
+            <p>完全免费，无需注册。所有数据保存在你的浏览器本地。</p>
+          </div>
+          <div class="faq-item">
+            <h4>适合什么人用？</h4>
+            <p>想做短视频/自媒体但不知道发什么的人；每天为选题发愁的创作者；想提高内容产出效率的博主。</p>
+          </div>
+          <div class="faq-item">
+            <h4>AI会替我创作吗？</h4>
+            <p>不会。AI只是帮你完成「选题」和「脚本框架」这些重复性工作。你的故事、案例、个人风格还是需要你自己来。</p>
+          </div>
         </div>
       </div>
 
-      <!-- DEEP DIVE: 技术细节（可折叠） -->
-      <details class="cookbook-details" data-animate="fade-in-up">
-        <summary class="details-summary">
-          <span class="details-icon">🔍</span>
-          想深入了解？点击查看技术细节
-        </summary>
-        <div class="details-content">
-          
-          <!-- AI选题引擎详解 -->
-          <div class="detail-section">
-            <h4>AI选题引擎是怎么工作的？</h4>
-            <div class="engine-flow">
-              <div class="engine-step">
-                <div class="step-icon">📥</div>
-                <h5>采集</h5>
-                <p>自动收集热点趋势、你领域内的爆款、你的历史高赞内容</p>
-              </div>
-              <div class="engine-arrow">→</div>
-              <div class="engine-step">
-                <div class="step-icon">⚡</div>
-                <h5>生成</h5>
-                <p>AI结合你的定位，生成5-10个选题，每个都带切入角度和标题草稿</p>
-              </div>
-              <div class="engine-arrow">→</div>
-              <div class="engine-step">
-                <div class="step-icon">✅</div>
-                <h5>审核</h5>
-                <p>系统自动评分，不合格的会重新生成，保证推荐质量</p>
-              </div>
-              <div class="engine-arrow">→</div>
-              <div class="engine-step">
-                <div class="step-icon">📤</div>
-                <h5>输出</h5>
-                <p>你看到的是经过筛选的高质量选题列表</p>
-              </div>
-            </div>
-            <div class="scoring-grid">
-              <h5>评分维度（满分100）</h5>
-              <div class="score-items">
-                <div class="score-item"><span class="score-weight">30%</span> 是否解决读者痛点</div>
-                <div class="score-item"><span class="score-weight">25%</span> 是否能引导变现</div>
-                <div class="score-item"><span class="score-weight">20%</span> 和别人的差异度</div>
-                <div class="score-item"><span class="score-weight">15%</span> 热点时效性</div>
-                <div class="score-item"><span class="score-weight">10%</span> 你能不能执行</div>
-              </div>
-            </div>
-          </div>
-
-          <!-- 系统架构 -->
-          <div class="detail-section">
-            <h4>系统架构：双模式设计</h4>
-            <p class="detail-intro">CreatorOS 分两个部分：设置一次的配置 + 每天使用的工具。</p>
-            <div class="architecture-diagram">
-              <div class="arch-mode arch-setup">
-                <h5>设置模式<span class="arch-badge">一次性配置</span></h5>
-                <ul>
-                  <li>你的理想读者是谁</li>
-                  <li>你的变现方式</li>
-                  <li>你的风格和优势</li>
-                  <li>你的对标账号</li>
-                  <li>你的内容方向</li>
-                </ul>
-              </div>
-              <div class="arch-arrow">→</div>
-              <div class="arch-mode arch-daily">
-                <h5>日常模式<span class="arch-badge daily">每日使用</span></h5>
-                <ul>
-                  <li>AI选题推荐</li>
-                  <li>脚本生成器</li>
-                  <li>素材库</li>
-                  <li>发布中心</li>
-                  <li>数据仪表盘</li>
-                </ul>
-              </div>
-              <div class="arch-knowledge">
-                <h5>知识库</h5>
-                <p>系统会记住你的配置、历史内容、数据表现，越用越懂你</p>
-              </div>
-            </div>
-          </div>
-
-          <!-- 设计理念对比 -->
-          <div class="detail-section">
-            <h4>设计理念：从「教你做」到「帮你做」</h4>
-            <div class="cookbook-table-wrapper">
-              <table class="cookbook-table">
-                <thead>
-                  <tr>
-                    <th>维度</th>
-                    <th>传统工具</th>
-                    <th>CreatorOS</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr>
-                    <td><strong>核心价值</strong></td>
-                    <td>教你怎么做</td>
-                    <td>直接帮你做决策</td>
-                  </tr>
-                  <tr>
-                    <td><strong>每次使用</strong></td>
-                    <td>从零开始，重复填表</td>
-                    <td>设置一次，永久复用</td>
-                  </tr>
-                  <tr>
-                    <td><strong>AI角色</strong></td>
-                    <td>辅助工具，你还得想</td>
-                    <td>核心引擎，80%自动化</td>
-                  </tr>
-                  <tr>
-                    <td><strong>花费时间</strong></td>
-                    <td>学习2-3小时</td>
-                    <td>执行15分钟</td>
-                  </tr>
-                </tbody>
-              </table>
-            </div>
-          </div>
+      <div class="cookbook-card cta-card" data-animate="fade-in-up">
+        <div class="cta-content">
+          <h3>👋 准备好了吗？</h3>
+          <p>5分钟设置，解锁全部功能</p>
+          <a href="setup-wizard.html" class="btn btn-primary btn-large">开始使用 CreatorOS</a>
         </div>
-      </details>
+      </div>
 
-      <!-- Credit -->
       <div class="cookbook-credit" data-animate="fade-in-up">
-        <p>CreatorOS · 基于薛辉课程 + 卡兹克AI选题系统 + Don哥商业方法论 · 2025</p>
+        <p style="text-align: center; color: var(--text-muted); font-size: var(--text-sm);">CreatorOS v2.0 · 2025</p>
       </div>
     </div>
   </section>
@@ -1423,6 +1298,117 @@
       font-size: var(--text-lg);
     }
 
+    /* Quick Start Steps */
+    .quick-start-steps {
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-4);
+    }
+
+    .quick-step {
+      display: flex;
+      gap: var(--space-4);
+      align-items: flex-start;
+    }
+
+    .quick-step-number {
+      width: 48px;
+      height: 48px;
+      background: linear-gradient(135deg, var(--color-primary), var(--color-accent));
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: var(--text-xl);
+      font-weight: 700;
+      color: white;
+      flex-shrink: 0;
+    }
+
+    .quick-step-content h4 {
+      font-weight: 600;
+      margin-bottom: var(--space-1);
+    }
+
+    .quick-step-content p {
+      font-size: var(--text-sm);
+      color: var(--text-secondary);
+      margin-bottom: var(--space-2);
+    }
+
+    .quick-step-time {
+      font-size: var(--text-xs);
+      color: var(--color-secondary);
+    }
+
+    /* Feature Showcase */
+    .feature-showcase {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: var(--space-4);
+    }
+
+    @media (max-width: 640px) {
+      .feature-showcase {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .feature-item {
+      background: var(--bg-surface);
+      border-radius: var(--radius-xl);
+      padding: var(--space-5);
+      text-align: center;
+      border: 1px solid var(--border-color);
+      transition: all var(--transition-base);
+    }
+
+    .feature-item:hover {
+      border-color: var(--color-primary);
+      transform: translateY(-2px);
+    }
+
+    .feature-icon {
+      font-size: var(--text-3xl);
+      margin-bottom: var(--space-3);
+    }
+
+    .feature-item h4 {
+      font-weight: 600;
+      margin-bottom: var(--space-2);
+    }
+
+    .feature-item p {
+      font-size: var(--text-sm);
+      color: var(--text-secondary);
+      line-height: 1.5;
+    }
+
+    /* FAQ List */
+    .faq-list {
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-4);
+    }
+
+    .faq-item {
+      background: var(--bg-surface);
+      border-radius: var(--radius-xl);
+      padding: var(--space-4);
+    }
+
+    .faq-item h4 {
+      font-weight: 600;
+      margin-bottom: var(--space-2);
+      color: var(--color-primary);
+    }
+
+    .faq-item p {
+      font-size: var(--text-sm);
+      color: var(--text-secondary);
+      line-height: 1.6;
+    }
+
     /* Collapsible Details */
     .cookbook-details {
       background: var(--bg-card);
@@ -1760,6 +1746,57 @@
     const hour = new Date().getHours();
     const greeting = hour < 12 ? '早上好' : hour < 18 ? '下午好' : '晚上好';
     document.querySelector('.page-title').textContent = `${greeting}，创作者`;
+    
+    function updateContentRatio() {
+      const publishQueue = JSON.parse(localStorage.getItem('creatorOS_publishQueue') || '[]');
+      
+      const mainTypes = ['教知识', '讲故事', '聊观点'];
+      const auxTypes = ['晒过程'];
+      
+      let mainCount = 0;
+      let auxCount = 0;
+      
+      publishQueue.forEach(item => {
+        if (mainTypes.includes(item.scriptType)) {
+          mainCount++;
+        } else {
+          auxCount++;
+        }
+      });
+      
+      if (mainCount === 0 && auxCount === 0) {
+        mainCount = 6;
+        auxCount = 2;
+      }
+      
+      const total = mainCount + auxCount;
+      const mainPercent = Math.round((mainCount / total) * 100);
+      const auxPercent = 100 - mainPercent;
+      
+      document.getElementById('ratio-bar-main').style.width = mainPercent + '%';
+      document.getElementById('ratio-bar-main').textContent = mainPercent + '%';
+      document.getElementById('ratio-bar-aux').style.width = auxPercent + '%';
+      document.getElementById('ratio-bar-aux').textContent = auxPercent + '%';
+      document.getElementById('main-count').textContent = mainCount;
+      document.getElementById('aux-count').textContent = auxCount;
+      
+      const statusEl = document.getElementById('ratio-status');
+      if (mainPercent >= 75 && mainPercent <= 85) {
+        statusEl.className = 'ratio-status good';
+        statusEl.textContent = '✓ 配比健康！建议保持 80% 主赛道 + 20% 辅助内容';
+      } else if (mainPercent > 85) {
+        statusEl.className = 'ratio-status warning';
+        statusEl.textContent = '⚠ 主赛道占比过高，建议增加一些轻松的辅助内容';
+      } else if (mainPercent < 60) {
+        statusEl.className = 'ratio-status bad';
+        statusEl.textContent = '⚠ 主赛道占比过低，需要增加变现相关内容';
+      } else {
+        statusEl.className = 'ratio-status warning';
+        statusEl.textContent = '⚠ 配比略偏，目标是 80% 主赛道 + 20% 辅助';
+      }
+    }
+    
+    updateContentRatio();
   </script>
 </body>
 </html>

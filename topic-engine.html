@@ -301,6 +301,222 @@
       color: var(--color-primary);
     }
     
+    /* 爆款元素选择器样式 */
+    .viral-elements-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-2xl);
+      padding: var(--space-6);
+      margin-bottom: var(--space-6);
+    }
+    
+    .viral-elements-title {
+      font-size: var(--text-lg);
+      font-weight: 600;
+      margin-bottom: var(--space-2);
+      display: flex;
+      align-items: center;
+      gap: var(--space-2);
+    }
+    
+    .viral-elements-subtitle {
+      font-size: var(--text-sm);
+      color: var(--text-muted);
+      margin-bottom: var(--space-4);
+    }
+    
+    .viral-elements-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: var(--space-3);
+    }
+    
+    @media (min-width: 768px) {
+      .viral-elements-grid {
+        grid-template-columns: repeat(4, 1fr);
+      }
+    }
+    
+    .viral-element-chip {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: var(--space-2);
+      padding: var(--space-4);
+      background: var(--bg-surface);
+      border: 2px solid var(--border-color);
+      border-radius: var(--radius-xl);
+      cursor: pointer;
+      transition: all var(--transition-base);
+      text-align: center;
+    }
+    
+    .viral-element-chip:hover {
+      border-color: var(--color-primary);
+      transform: translateY(-2px);
+    }
+    
+    .viral-element-chip.selected {
+      border-color: var(--color-secondary);
+      background: rgba(0, 212, 170, 0.1);
+    }
+    
+    .viral-element-icon {
+      font-size: var(--text-2xl);
+    }
+    
+    .viral-element-name {
+      font-weight: 600;
+      font-size: var(--text-sm);
+    }
+    
+    .viral-element-desc {
+      font-size: var(--text-xs);
+      color: var(--text-muted);
+      line-height: 1.4;
+    }
+    
+    /* 选题升级面板 */
+    .topic-upgrade-panel {
+      background: linear-gradient(135deg, rgba(88, 86, 214, 0.1), rgba(255, 45, 85, 0.1));
+      border: 1px solid rgba(88, 86, 214, 0.2);
+      border-radius: var(--radius-2xl);
+      padding: var(--space-6);
+      margin-bottom: var(--space-6);
+      display: none;
+    }
+    
+    .topic-upgrade-panel.active {
+      display: block;
+    }
+    
+    .upgrade-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: var(--space-4);
+    }
+    
+    .upgrade-title {
+      font-size: var(--text-lg);
+      font-weight: 600;
+    }
+    
+    .upgrade-comparison {
+      display: grid;
+      grid-template-columns: 1fr auto 1fr;
+      gap: var(--space-4);
+      align-items: center;
+      margin-bottom: var(--space-4);
+    }
+    
+    @media (max-width: 640px) {
+      .upgrade-comparison {
+        grid-template-columns: 1fr;
+      }
+    }
+    
+    .upgrade-before, .upgrade-after {
+      background: var(--bg-card);
+      border-radius: var(--radius-xl);
+      padding: var(--space-4);
+    }
+    
+    .upgrade-before {
+      border: 2px solid rgba(255, 149, 0, 0.3);
+    }
+    
+    .upgrade-after {
+      border: 2px solid rgba(0, 212, 170, 0.3);
+    }
+    
+    .upgrade-label {
+      font-size: var(--text-xs);
+      color: var(--text-muted);
+      margin-bottom: var(--space-2);
+    }
+    
+    .upgrade-topic {
+      font-weight: 600;
+      margin-bottom: var(--space-3);
+      line-height: 1.4;
+    }
+    
+    .upgrade-score {
+      display: flex;
+      align-items: center;
+      gap: var(--space-2);
+    }
+    
+    .score-bar {
+      flex: 1;
+      height: 8px;
+      background: var(--bg-elevated);
+      border-radius: var(--radius-full);
+      overflow: hidden;
+    }
+    
+    .score-bar-fill {
+      height: 100%;
+      border-radius: var(--radius-full);
+      transition: width 0.5s ease;
+    }
+    
+    .score-bar-fill.low {
+      background: var(--color-warning);
+    }
+    
+    .score-bar-fill.high {
+      background: var(--color-secondary);
+    }
+    
+    .score-number {
+      font-weight: 700;
+      font-size: var(--text-lg);
+      min-width: 50px;
+      text-align: right;
+    }
+    
+    .score-number.low {
+      color: var(--color-warning);
+    }
+    
+    .score-number.high {
+      color: var(--color-secondary);
+    }
+    
+    .upgrade-arrow {
+      font-size: var(--text-2xl);
+      color: var(--color-primary);
+    }
+    
+    @media (max-width: 640px) {
+      .upgrade-arrow {
+        transform: rotate(90deg);
+      }
+    }
+    
+    .upgrade-elements-used {
+      display: flex;
+      flex-wrap: wrap;
+      gap: var(--space-2);
+      margin-top: var(--space-3);
+    }
+    
+    .element-tag {
+      padding: var(--space-1) var(--space-3);
+      background: rgba(0, 212, 170, 0.1);
+      border-radius: var(--radius-full);
+      font-size: var(--text-xs);
+      color: var(--color-secondary);
+    }
+    
+    .upgrade-actions {
+      display: flex;
+      gap: var(--space-3);
+      justify-content: center;
+    }
+    
     .context-card {
       background: var(--bg-surface);
       border-radius: var(--radius-xl);
@@ -429,6 +645,93 @@
         </div>
       </div>
       
+      <!-- 8大爆款元素选择器 -->
+      <div class="viral-elements-card" data-animate="fade-in-up">
+        <div class="viral-elements-title">🔥 爆款元素增强</div>
+        <div class="viral-elements-subtitle">选择1-2个元素，将60分选题升级到90分</div>
+        <div class="viral-elements-grid" id="viral-elements-grid">
+          <div class="viral-element-chip" data-element="成本的" onclick="toggleViralElement(this)">
+            <span class="viral-element-icon">💰</span>
+            <span class="viral-element-name">成本的</span>
+            <span class="viral-element-desc">极限预算挑战</span>
+          </div>
+          <div class="viral-element-chip" data-element="人群的" onclick="toggleViralElement(this)">
+            <span class="viral-element-icon">👥</span>
+            <span class="viral-element-name">人群的</span>
+            <span class="viral-element-desc">精准人群锁定</span>
+          </div>
+          <div class="viral-element-chip" data-element="奇葩的" onclick="toggleViralElement(this)">
+            <span class="viral-element-icon">🤪</span>
+            <span class="viral-element-name">奇葩的</span>
+            <span class="viral-element-desc">反常规现象</span>
+          </div>
+          <div class="viral-element-chip" data-element="最差的" onclick="toggleViralElement(this)">
+            <span class="viral-element-icon">👀</span>
+            <span class="viral-element-name">最差的</span>
+            <span class="viral-element-desc">围观心理</span>
+          </div>
+          <div class="viral-element-chip" data-element="反差的" onclick="toggleViralElement(this)">
+            <span class="viral-element-icon">🔄</span>
+            <span class="viral-element-name">反差的</span>
+            <span class="viral-element-desc">身份/行为错位</span>
+          </div>
+          <div class="viral-element-chip" data-element="怀旧的" onclick="toggleViralElement(this)">
+            <span class="viral-element-icon">📼</span>
+            <span class="viral-element-name">怀旧的</span>
+            <span class="viral-element-desc">集体记忆</span>
+          </div>
+          <div class="viral-element-chip" data-element="荷尔蒙的" onclick="toggleViralElement(this)">
+            <span class="viral-element-icon">💓</span>
+            <span class="viral-element-name">荷尔蒙的</span>
+            <span class="viral-element-desc">注意尺度</span>
+          </div>
+          <div class="viral-element-chip" data-element="头牌的" onclick="toggleViralElement(this)">
+            <span class="viral-element-icon">⭐</span>
+            <span class="viral-element-name">头牌的</span>
+            <span class="viral-element-desc">名人效应</span>
+          </div>
+        </div>
+      </div>
+      
+      <!-- 选题升级面板 -->
+      <div class="topic-upgrade-panel" id="topic-upgrade-panel" data-animate="fade-in-up">
+        <div class="upgrade-header">
+          <div class="upgrade-title">✨ 选题升级预览</div>
+          <button class="btn btn-ghost" onclick="closeUpgradePanel()">关闭</button>
+        </div>
+        <div class="upgrade-comparison">
+          <div class="upgrade-before">
+            <div class="upgrade-label">原始选题</div>
+            <div class="upgrade-topic" id="upgrade-original-topic">如何做好短视频</div>
+            <div class="upgrade-score">
+              <div class="score-bar">
+                <div class="score-bar-fill low" id="original-score-bar" style="width: 62%"></div>
+              </div>
+              <span class="score-number low" id="original-score">62分</span>
+            </div>
+          </div>
+          <div class="upgrade-arrow">→</div>
+          <div class="upgrade-after">
+            <div class="upgrade-label">升级后选题</div>
+            <div class="upgrade-topic" id="upgrade-enhanced-topic">程序员0成本转型短视频,3个月粉丝破10万</div>
+            <div class="upgrade-score">
+              <div class="score-bar">
+                <div class="score-bar-fill high" id="enhanced-score-bar" style="width: 87%"></div>
+              </div>
+              <span class="score-number high" id="enhanced-score">87分</span>
+            </div>
+            <div class="upgrade-elements-used" id="upgrade-elements-used">
+              <span class="element-tag">成本的</span>
+              <span class="element-tag">反差的</span>
+            </div>
+          </div>
+        </div>
+        <div class="upgrade-actions">
+          <button class="btn btn-primary" onclick="applyUpgrade()">应用升级</button>
+          <button class="btn btn-secondary" onclick="regenerateUpgrade()">重新生成</button>
+        </div>
+      </div>
+      
       <div class="filter-bar" data-animate="fade-in-up">
         <button class="filter-chip active" onclick="filterTopics('all', this)">全部</button>
         <button class="filter-chip" onclick="filterTopics('high', this)">高分 (80+)</button>
@@ -526,6 +829,142 @@
     ];
     
     let currentTopics = [];
+    let selectedViralElements = [];
+    
+    const viralElementExamples = {
+      '成本的': { prefix: '0成本', suffix: '', example: '0成本做出百万播放短视频' },
+      '人群的': { prefix: '', suffix: '', example: '35岁宝妈产后快速瘦身', personas: ['35岁', '宝妈', '程序员', '职场人', '大学生', '00后'] },
+      '奇葩的': { prefix: '', suffix: '的离谱方法', example: '用AI生成百万播放视频的离谱方法' },
+      '最差的': { prefix: '看完100个失败案例后', suffix: '', example: '看完100个失败案例后总结的经验' },
+      '反差的': { prefix: '', suffix: '', example: '程序员转型短视频月入10万', patterns: ['XX转型YY', 'XX却在做YY'] },
+      '怀旧的': { prefix: '', suffix: '还能用吗', example: '5年前的短视频套路还能用吗' },
+      '荷尔蒙的': { prefix: '', suffix: '', example: '颜值博主的涨粉秘诀', note: '注意尺度' },
+      '头牌的': { prefix: '学习', suffix: '的方法论', example: '学习薛辉的短视频方法论' }
+    };
+    
+    function toggleViralElement(el) {
+      const element = el.dataset.element;
+      
+      if (el.classList.contains('selected')) {
+        el.classList.remove('selected');
+        selectedViralElements = selectedViralElements.filter(e => e !== element);
+      } else {
+        if (selectedViralElements.length >= 2) {
+          const firstSelected = document.querySelector('.viral-element-chip.selected');
+          if (firstSelected) {
+            firstSelected.classList.remove('selected');
+            selectedViralElements.shift();
+          }
+        }
+        el.classList.add('selected');
+        selectedViralElements.push(element);
+      }
+      
+      if (selectedViralElements.length > 0 && currentTopics.length > 0) {
+        showUpgradePreview();
+      } else {
+        document.getElementById('topic-upgrade-panel').classList.remove('active');
+      }
+    }
+    
+    function showUpgradePreview() {
+      const panel = document.getElementById('topic-upgrade-panel');
+      const originalTopic = currentTopics[0];
+      
+      const originalTitle = originalTopic?.title || '如何做好短视频';
+      const originalScore = originalTopic?.score || 62;
+      
+      document.getElementById('upgrade-original-topic').textContent = originalTitle;
+      document.getElementById('original-score').textContent = originalScore + '分';
+      document.getElementById('original-score-bar').style.width = originalScore + '%';
+      
+      const enhanced = generateEnhancedTopic(originalTitle, selectedViralElements);
+      const scoreBoost = selectedViralElements.length * 12 + Math.floor(Math.random() * 5);
+      const enhancedScore = Math.min(98, originalScore + scoreBoost);
+      
+      document.getElementById('upgrade-enhanced-topic').textContent = enhanced;
+      document.getElementById('enhanced-score').textContent = enhancedScore + '分';
+      document.getElementById('enhanced-score-bar').style.width = enhancedScore + '%';
+      
+      const elementsContainer = document.getElementById('upgrade-elements-used');
+      elementsContainer.innerHTML = selectedViralElements.map(e => 
+        `<span class="element-tag">${e}</span>`
+      ).join('');
+      
+      panel.classList.add('active');
+    }
+    
+    function generateEnhancedTopic(original, elements) {
+      let enhanced = original;
+      
+      elements.forEach(element => {
+        const config = viralElementExamples[element];
+        if (!config) return;
+        
+        switch(element) {
+          case '成本的':
+            enhanced = enhanced.replace(/如何|怎么/, '0成本');
+            if (!enhanced.includes('0成本')) {
+              enhanced = '0成本' + enhanced;
+            }
+            break;
+          case '人群的':
+            const persona = config.personas[Math.floor(Math.random() * config.personas.length)];
+            enhanced = persona + enhanced;
+            break;
+          case '反差的':
+            if (enhanced.includes('副业') || enhanced.includes('转型')) {
+              enhanced = enhanced.replace('副业', '程序员转型副业');
+            } else {
+              enhanced = enhanced + '，收入反超工资';
+            }
+            break;
+          case '奇葩的':
+            enhanced = enhanced + '的离谱方法';
+            break;
+          case '最差的':
+            enhanced = '看完100个失败案例后，' + enhanced;
+            break;
+          case '怀旧的':
+            enhanced = '5年前的' + enhanced + '还能用吗';
+            break;
+          case '头牌的':
+            enhanced = '学习薛辉：' + enhanced;
+            break;
+        }
+      });
+      
+      return enhanced;
+    }
+    
+    function closeUpgradePanel() {
+      document.getElementById('topic-upgrade-panel').classList.remove('active');
+    }
+    
+    function applyUpgrade() {
+      const enhancedTitle = document.getElementById('upgrade-enhanced-topic').textContent;
+      const enhancedScore = parseInt(document.getElementById('enhanced-score').textContent);
+      
+      if (currentTopics.length > 0) {
+        currentTopics[0] = {
+          ...currentTopics[0],
+          title: enhancedTitle,
+          score: enhancedScore,
+          viralElements: [...selectedViralElements]
+        };
+        renderTopics(currentTopics);
+        closeUpgradePanel();
+        
+        selectedViralElements = [];
+        document.querySelectorAll('.viral-element-chip.selected').forEach(el => {
+          el.classList.remove('selected');
+        });
+      }
+    }
+    
+    function regenerateUpgrade() {
+      showUpgradePreview();
+    }
     
     function loadContext() {
       const profile = localStorage.getItem('creatorOS_profile');
@@ -626,6 +1065,7 @@
             <div class="topic-badge-group">
               <span class="topic-score-badge ${getScoreClass(topic.score)}">${topic.score}分</span>
               <span class="topic-type-badge">${topic.type}</span>
+              ${topic.viralElements ? topic.viralElements.map(e => `<span class="topic-type-badge" style="background: rgba(0, 212, 170, 0.1); color: var(--color-secondary);">🔥${e}</span>`).join('') : ''}
             </div>
           </div>
           <div class="topic-event">📰 ${topic.event}</div>
@@ -655,6 +1095,7 @@
           </div>
           <div class="topic-actions">
             <button class="btn btn-primary" onclick="selectTopic(${topic.id})">选择并生成脚本</button>
+            <button class="btn btn-ghost" onclick="upgradeTopic(${topic.id})">🔥 爆款升级</button>
             <button class="btn btn-ghost" onclick="saveTopic(${topic.id})">⭐ 归档</button>
           </div>
         </div>
@@ -687,6 +1128,25 @@
       if (topic) {
         localStorage.setItem('creatorOS_selectedTopic', JSON.stringify(topic));
         window.location.href = 'script-generator.html';
+      }
+    }
+    
+    function upgradeTopic(id) {
+      const topic = currentTopics.find(t => t.id === id);
+      if (topic) {
+        const index = currentTopics.indexOf(topic);
+        currentTopics.unshift(currentTopics.splice(index, 1)[0]);
+        
+        document.getElementById('viral-elements-grid').scrollIntoView({ behavior: 'smooth' });
+        
+        const panel = document.getElementById('topic-upgrade-panel');
+        document.getElementById('upgrade-original-topic').textContent = topic.title;
+        document.getElementById('original-score').textContent = topic.score + '分';
+        document.getElementById('original-score-bar').style.width = topic.score + '%';
+        
+        if (selectedViralElements.length > 0) {
+          showUpgradePreview();
+        }
       }
     }
     
